@@ -1,8 +1,8 @@
 package ce.inu.ikta;
 
-import android.graphics.Bitmap;
+        import android.graphics.Bitmap;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
+        import com.googlecode.tesseract.android.TessBaseAPI;
 
 /**
  * Created by 김광현 on 2018-03-11.
