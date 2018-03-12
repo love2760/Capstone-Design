@@ -4,7 +4,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-
+/* 주석을 잘 달도록 하자
+/* 날짜 이름 내용을 적어주자
+ * 인자가 뭘 의미하는지 잘 말해주도록 하자.
+ */
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
