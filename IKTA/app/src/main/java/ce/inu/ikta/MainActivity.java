@@ -38,15 +38,10 @@ package ce.inu.ikta;
         import android.widget.FrameLayout;
         import android.widget.Toast;
 
-        import java.io.ByteArrayOutputStream;
-        import java.io.File;
-        import java.io.FileNotFoundException;
-        import java.io.FileOutputStream;
-        import java.io.IOException;
-
-
-
-
+/* 주석을 잘 달도록 하자
+/* 날짜 이름 내용을 적어주자
+ * 인자가 뭘 의미하는지 잘 말해주도록 하자.
+ */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     Preview preview;

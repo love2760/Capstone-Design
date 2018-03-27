@@ -2,7 +2,6 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-
 extern "C"
 JNIEXPORT jstring
 
