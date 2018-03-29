@@ -12,11 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/button_capture"
+    <ImageButton
+        android:src="@mipmap/ic_button"
+        android:id="@+id/imagebutton"
+        android:padding="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Capture" />
+        android:layout_gravity="bottom|center"
+        android:background="@android:color/transparent"/>
 
     </FrameLayout>

@@ -15,6 +15,7 @@ package ce.inu.ikta;
         import android.hardware.Camera;
         import android.hardware.Camera.PictureCallback;
         import android.hardware.Camera.ShutterCallback;
+        import android.hardware.SensorManager;
         import android.net.Uri;
         import android.os.AsyncTask;
         import android.os.Build;
@@ -27,6 +28,7 @@ package ce.inu.ikta;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
+        import android.view.OrientationEventListener;
         import android.view.Surface;
         import android.view.SurfaceView;
         import android.view.View;
@@ -36,7 +38,14 @@ package ce.inu.ikta;
         import android.view.WindowManager;
         import android.widget.Button;
         import android.widget.FrameLayout;
+        import android.widget.ImageButton;
         import android.widget.Toast;
+
+        import java.io.ByteArrayOutputStream;
+        import java.io.File;
+        import java.io.FileNotFoundException;
+        import java.io.FileOutputStream;
+        import java.io.IOException;
 
 /* 주석을 잘 달도록 하자
 /* 날짜 이름 내용을 적어주자
@@ -47,13 +56,15 @@ public class MainActivity extends AppCompatActivity {
     Preview preview;
     Camera camera;
     Context ctx;
+    OrientationEventListener orientEventListener;
+    int orientation;
 
     private final static int PERMISSIONS_REQUEST_CODE = 100;
     // Camera.CameraInfo.CAMERA_FACING_FRONT or Camera.CameraInfo.CAMERA_FACING_BACK
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     private AppCompatActivity mActivity;
 
-
+    //앱 종료 or 재시작
     public static void doRestart(Context c) {
         //http://stackoverflow.com/a/22345538
         try {
@@ -128,12 +139,11 @@ public class MainActivity extends AppCompatActivity {
 
                 camera = Camera.open( CAMERA_FACING );
                 // camera orientation
-                camera.setDisplayOrientation( setCameraDisplayOrientation( this, CAMERA_FACING,
-                        camera ) );
+                camera.setDisplayOrientation( 90 );
                 // get Camera parameters
                 Camera.Parameters params = camera.getParameters();
                 // picture image orientation
-                params.setRotation( setCameraDisplayOrientation( this, CAMERA_FACING, camera ) );
+                //params.setRotation( 90 );
                 camera.startPreview();
 
             } catch (RuntimeException ex) {
@@ -152,6 +162,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         ctx = this;
         mActivity = this;
+        orientEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+            @Override
+            public void onOrientationChanged(int orientation2) {
+                orientation=orientation2;
+            }
+        };
+
+        if (orientEventListener.canDetectOrientation()) {
+            Toast.makeText(this, "Can DetectOrientation",
+                    Toast.LENGTH_LONG).show();
+            orientEventListener.enable();
+        } else {
+            Toast.makeText(this, "Can't DetectOrientation",
+                    Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         //상태바 없애기
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -162,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView( R.layout.activity_main );
 
-        Button button = (Button) findViewById( R.id.button_capture );
+        ImageButton button = (ImageButton) findViewById( R.id.imagebutton );
         button.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,9 +288,7 @@ public class MainActivity extends AppCompatActivity {
             int w = camera.getParameters().getPictureSize().width;
             int h = camera.getParameters().getPictureSize().height;
 
-            int orientation = setCameraDisplayOrientation( MainActivity.this,
-                    CAMERA_FACING, camera );
-
+            //int aaa=setCameraDisplayOrientation( MainActivity.this, CAMERA_FACING, camera );
             //byte array를 bitmap으로 변환
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -272,9 +296,12 @@ public class MainActivity extends AppCompatActivity {
             //int w = bitmap.getWidth();
             //int h = bitmap.getHeight();
 
+            int aaa=1234;
+            Log.d( TAG,"orientation : "+orientation );
+            aaa=checkDeviceOrientation( orientation );
             //이미지를 디바이스 방향으로 회전
             Matrix matrix = new Matrix();
-            matrix.postRotate( orientation );
+            matrix.postRotate( aaa );
             bitmap = Bitmap.createBitmap( bitmap, 0, 0, w, h, matrix, true );
 
             //bitmap을 byte array로 변환
@@ -285,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
             //파일로 저장
             new SaveImageTask().execute( currentData );
             resetCam();
-            Log.d( TAG, "onPictureTaken - jpeg" );
+            Log.d( TAG, "onPictureTaken - jpeg" +aaa);
         }
     };
 
@@ -324,45 +351,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * @param activity
-     * @param cameraId Camera.CameraInfo.CAMERA_FACING_FRONT,
-     *                 Camera.CameraInfo.CAMERA_FACING_BACK
-     * @param camera   Camera Orientation
-     *                 reference by https://developer.android.com/reference/android/hardware/Camera.html
-     */
-    public static int setCameraDisplayOrientation(Activity activity,
-                                                  int cameraId, android.hardware.Camera camera) {
-        android.hardware.Camera.CameraInfo info =
-                new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo( cameraId, info );
-        int rotation = activity.getWindowManager().getDefaultDisplay()
-                .getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
 
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360;  // compensate the mirror
-        } else {  // back-facing
-            result = (info.orientation - degrees + 360) % 360;
+    private int checkDeviceOrientation(int orientation) {
+        Log.d( TAG,"방향확인" );
+        if(orientation>=315 || orientation<45) {
+            Log.d( TAG,"방향1" );
+            return 90;
         }
-
-        return result;
+        else if(orientation>=45 && orientation<135) {
+            Log.d( TAG,"방향2" );
+            return 180;
+        }
+        else if(orientation>=135 && orientation<225) {
+            Log.d( TAG,"방향3" );
+            return 270;
+        }
+        else if(orientation>=225 && orientation<315) {
+            Log.d( TAG,"방향4" );
+            return 0;
+        } else { Log.d( TAG,"방향확인 실패" ); return 0; }
     }
 
 

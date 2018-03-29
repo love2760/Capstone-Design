@@ -11,7 +11,7 @@ package ce.inu.ikta;
 
 public class TessOCR {
     TessBaseAPI mtess;
-    Context mCtx)
+    Context mCtx;
     TessOCR(Context context) {
         mCtx = context;
         TessDataManager.initTessTrainedData(mCtx);
