@@ -5,7 +5,7 @@ void imgFilter(Mat inputImg, Mat &outImg) {
 	cvtColor(inputImg, outImg, CV_BGR2GRAY);
 	GaussianBlur(outImg, outImg, size, 0);
 	adaptiveThreshold(outImg, outImg, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 75, 10);
-	//bitwise_not(outImg, outImg);
+	bitwise_not(outImg, outImg);
 }
 
 vector<Rect> rectCheck(Mat& image, vector<vector<Point>> contours_poly) {

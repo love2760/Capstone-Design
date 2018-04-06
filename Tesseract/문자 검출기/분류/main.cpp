@@ -1,6 +1,4 @@
 /*
-	작성일 2018년 3월 25일
-	작성자 김광현
 	이 프로그램은 tesseract 교육용 이미지를 보다 편하게 추출하기 위하여
 	제작된 프로그램입니다. 1.jpg라는 파일을 기반으로 이미지를 처리한 후
 	최대한 글자 단위로 추출합니다. output 폴더가 존재하지 않으면 저장되지
@@ -83,13 +81,13 @@ int main(int argc, char** argv)
 	for (int i = 0; i<contours_poly.size(); i++) {
 		Rect r = boundingRect(Mat(contours_poly[i]));
 		
-		if (r.area() < 150) continue;
+		if (r.area() < 30) continue;
 			bool inside = false;
 			for (int j = 0; j < contours_poly.size(); j++) {
 				if (j == i)continue;
 
 				Rect r2 = boundingRect(Mat(contours_poly[j]));
-				if (r2.area() < 150 || r2.area() < r.area())continue;
+				if (r2.area() < 30 || r2.area() < r.area())continue;
 				if (r.x > r2.x&&r.x + r.width<r2.x + r2.width&&
 					r.y>r2.y&&r.y + r.height < r2.y + r2.height) {
 
@@ -105,21 +103,20 @@ int main(int argc, char** argv)
 	//Get bounding rects
 	vector<Rect> v(rectCheck(img_gray, validContours));
 	for (int i = 0; i<v.size(); i++) {
-		//boundRect[i] = boundingRect(Mat(validContours[i]));
-		rectangle(img_gray, v[i].tl(), v[i].br(), Scalar(75), 3, 8, 0);
-		
+		boundRect[i] = boundingRect(Mat(validContours[i]));
+		rectangle(img_gray, v[i].tl(), v[i].br(), Scalar(75), 1, 8, 0);
 	}
 	
 	//윈도우 생성  
-	namedWindow("original image", WINDOW_AUTOSIZE);
+	//namedWindow("original image", WINDOW_AUTOSIZE);
 
 
 
 
 	//윈도우에 출력  
-	imshow("original image", img_original);
-	imshow("gray image", img_gray);
-	imshow("aa", img_gray2);
+	//imshow("original image", img_original);
+	//imshow("gray image", img_gray);
+	//imshow("aa", img_gray2);
 	//키보드 입력이 될때까지 대기  
 	//waitKey(0);
 

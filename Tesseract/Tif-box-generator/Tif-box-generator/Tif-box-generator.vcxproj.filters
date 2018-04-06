@@ -15,16 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imgpreprocess.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="imgpreprocess.h">
+    <ClCompile Include="boxdata.cpp">
       <Filter>소스 파일</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>
