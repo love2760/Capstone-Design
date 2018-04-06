@@ -47,11 +47,11 @@ package ce.inu.ikta;
         import java.io.FileOutputStream;
         import java.io.IOException;
 
-/* 주석을 잘 달도록 하자
-/* 날짜 이름 내용을 적어주자
- * 인자가 뭘 의미하는지 잘 말해주도록 하자.
- */
+
+
 public class MainActivity extends AppCompatActivity {
+
+    //변수 및 객체 선언
     private static final String TAG = "MainActivity";
     Preview preview;
     Camera camera;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public static void doRestart(Context c) {
         //http://stackoverflow.com/a/22345538
         try {
-            //check if the context is given
+            //주어진 context 확인
             if (c != null) {
                 //fetch the packagemanager so we can get the default launch activity
                 // (you can replace this intent with any other activity if you want
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             //int w = bitmap.getWidth();
             //int h = bitmap.getHeight();
 
-            int aaa=1234;
+            int aaa;
             Log.d( TAG,"orientation : "+orientation );
             aaa=checkDeviceOrientation( orientation );
             //이미지를 디바이스 방향으로 회전
