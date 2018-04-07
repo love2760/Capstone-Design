@@ -1,6 +1,6 @@
 #include "opencv_module.h"
 
-void imgFilter(Mat inputImg, Mat &outImg) {
+void imgFilter(Mat inputImg, Mat outImg) {
     cv::Size size(3, 3);
     cvtColor(inputImg, outImg, CV_BGR2GRAY);
     GaussianBlur(outImg, outImg, size, 0);
@@ -8,7 +8,7 @@ void imgFilter(Mat inputImg, Mat &outImg) {
     bitwise_not(outImg, (outImg));
 }
 
-vector<Rect> rectCheck(Mat& image, vector<vector<Point>> contours_poly) {
+vector<Rect> rectCheck(Mat& image, vector< vector<Point> > contours_poly) {
     vector<Rect> boundedRect;
     sort(contours_poly.begin(), contours_poly.end(), comparator());
     //이미지를 처리하여 얻은 외곽선들을 이용하여 사각형 단위로 문자를

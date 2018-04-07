@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -17,10 +18,8 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.SensorManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -32,16 +31,15 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static ce.inu.ikta.globalValue.bitimg;
 
@@ -59,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private final static int PERMISSIONS_REQUEST_CODE = 100;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
-    byte[] byteimg;
     boolean flag;
     MainActivity aaa;
 
@@ -70,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.activity_main );
         mActivity = this;
         aaa = this;
-        Log.d( TAG,"로그다아아아아아아아아  앙ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+aaa );
         setID();
         setListener();
         setPermissions();
@@ -100,11 +96,21 @@ public class MainActivity extends AppCompatActivity {
         cameraShtBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cameraShtBtn.setEnabled(false);
+                camera.autoFocus(myAutoFocusCallback);
                 camera.takePicture( shutterCallback, rawCallback, bitmapCallback );
             }
         } );
-
     }
+    //auto focus
+    Camera.AutoFocusCallback myAutoFocusCallback = new Camera.AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+        }
+    };
+
+
+
     void setPermissions() {
         if (getPackageManager().hasSystemFeature( PackageManager.FEATURE_CAMERA )) {
 
@@ -112,12 +118,17 @@ public class MainActivity extends AppCompatActivity {
                 // 런타임 퍼미션 처리 필요
 
                 int hasCameraPermission = ContextCompat.checkSelfPermission( this, Manifest.permission.CAMERA );
-
-                if (hasCameraPermission == PackageManager.PERMISSION_GRANTED ) {
-                    ;//이미 퍼미션을 가지고 있음
+                int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+                if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                        && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED
+                        && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
+                    //이미 퍼미션을 가지고 있음
                 } else {
                     //퍼미션 요청
-                    ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CODE );
+                    ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_CODE );
                 }
             }
 
@@ -138,8 +149,14 @@ public class MainActivity extends AppCompatActivity {
 
             int hasCameraPermission = ContextCompat.checkSelfPermission( this,
                     Manifest.permission.CAMERA );
+            int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE );
+            int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE );
 
-            if (hasCameraPermission == PackageManager.PERMISSION_GRANTED) {
+            if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                    && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED
+                    && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
 
                 //이미 퍼미션을 가지고 있음
                 doRestart( this );
@@ -155,18 +172,39 @@ public class MainActivity extends AppCompatActivity {
     private void checkPermissions() {
         int hasCameraPermission = ContextCompat.checkSelfPermission( this,
                 Manifest.permission.CAMERA );
+        int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE );
+        int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+                Manifest.permission.READ_EXTERNAL_STORAGE );
+
 
         boolean cameraRationale = ActivityCompat.shouldShowRequestPermissionRationale( this,
                 Manifest.permission.CAMERA );
+        boolean writeExternalStorageRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        boolean readExternalStorageRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE);
 
-        if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && cameraRationale))
+        if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && cameraRationale)
+                || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
+                && readExternalStorageRationale)
+                || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
+                && writeExternalStorageRationale))
             showDialogForPermission( "앱을 실행하려면 퍼미션을 허가하셔야합니다." );
 
-        else if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && !cameraRationale))
+        else if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && !cameraRationale)
+                || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
+                && !readExternalStorageRationale)
+                || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
+                && !writeExternalStorageRationale))
             showDialogForPermissionSetting( "퍼미션 거부 + Don't ask again(다시 묻지 않음) " +
                     "체크 박스를 설정한 경우로 설정에서 퍼미션 허가해야합니다." );
 
-        else if (hasCameraPermission == PackageManager.PERMISSION_GRANTED) {
+        else if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                || hasWriteExternalStoragePermission== PackageManager.PERMISSION_GRANTED
+                || hasReadExternalStoragePermission== PackageManager.PERMISSION_GRANTED ) {
             doRestart( this );
         }
     }
@@ -183,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 //퍼미션 요청
                 ActivityCompat.requestPermissions( MainActivity.this,
-                        new String[]{Manifest.permission.CAMERA},
+                        new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSIONS_REQUEST_CODE );
             }
         } );
@@ -339,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetCam() {
         startCamera();
+        cameraShtBtn.setEnabled(true);
         Intent i = new Intent( MainActivity.this,resultActivity.class );
         startActivity( i );
     }
@@ -379,12 +418,7 @@ public class MainActivity extends AppCompatActivity {
             Matrix matrix = new Matrix();
             matrix.postRotate( checkDeviceOrientation( orientation ) );
             bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
-            /*
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress( Bitmap.CompressFormat.JPEG, 100, stream );
-            byteimg = null;
-            byteimg = stream.toByteArray();
-            */
+
             Log.d( TAG,"bitmapCallback close" );
             resetCam();
         }

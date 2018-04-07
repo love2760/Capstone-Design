@@ -9,7 +9,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #define IKTA_OPENCV_MODULE_H
-
+#endif
 /************************************************************************
 작성일 18-03-25
 작성자 김광현
@@ -29,5 +29,5 @@ public:
 
 };
 
-void imgFilter(Mat inputImg,Mat &outimg);
-vector<Rect> rectCheck(Mat& image, vector<vector<Point>> contours_poly);
+void imgFilter(Mat inputImg,Mat outimg);
+vector<Rect> rectCheck(Mat& image, vector< vector<Point> > contours_poly);
