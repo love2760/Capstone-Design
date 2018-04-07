@@ -2,7 +2,6 @@ package ce.inu.ikta;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -67,14 +66,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.activity_main );
         mActivity = this;
         aaa = this;
-        setID();
+        setValue();
         setListener();
         setPermissions();
+        copyTrainData();
+    }
+    private void copyTrainData() {
+        AssetManager assetManager = getAssets();
+        InputStream in = null;
+        OutputStream out = null;
+        String ASSET_FILE_PATH = "tessdata/ikta.traineddata";
+        String FILENAME = "ikta.traineddata";
+
+        try {
+            in = assetManager.open(ASSET_FILE_PATH);
+            Log.v(TAG,"assets 파일 오픈 성공");
+            Log.v(TAG,"폴더 이름 "+getExternalFilesDir(null));
+            File outFile = new File(getExternalFilesDir(null), FILENAME);
+            out = new FileOutputStream(outFile);
+            byte[] buffer = new byte[1024];
+            int read;
+            while((read = in.read(buffer)) != -1){
+                out.write(buffer, 0, read);
+            }
+            Log.v(TAG,"파일 쓰기 성공");
+        }catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(in != null) try {in.close();}catch(IOException e){/*nothing*/}
+            if(out != null) try {out.close();}catch(IOException e){/*nothing*/}
+        }
     }
 
 
-
-    void setID() {
+    void setValue() {
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );
         flag =false;
@@ -108,8 +133,6 @@ public class MainActivity extends AppCompatActivity {
         public void onAutoFocus(boolean success, Camera camera) {
         }
     };
-
-
 
     void setPermissions() {
         if (getPackageManager().hasSystemFeature( PackageManager.FEATURE_CAMERA )) {
