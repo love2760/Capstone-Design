@@ -76,12 +76,17 @@ public class MainActivity extends AppCompatActivity {
         InputStream in = null;
         OutputStream out = null;
         String ASSET_FILE_PATH = "tessdata/ikta.traineddata";
-        String FILENAME = "ikta.traineddata";
+        String FILENAME = "tessdata/ikta.traineddata";
+        String TESSDATAPATH = getExternalFilesDir(null).getAbsolutePath()+"/tessdata";
 
         try {
             in = assetManager.open(ASSET_FILE_PATH);
             Log.v(TAG,"assets 파일 오픈 성공");
-            Log.v(TAG,"폴더 이름 "+getExternalFilesDir(null));
+            Log.v(TAG,"폴더 이름 "+getExternalFilesDir(null).getAbsolutePath());
+            File tessDataFolder = new File(getExternalFilesDir(null).getAbsolutePath(),"tessdata");
+            if(!tessDataFolder.exists()) {
+                tessDataFolder.mkdirs();
+            }
             File outFile = new File(getExternalFilesDir(null), FILENAME);
             out = new FileOutputStream(outFile);
             byte[] buffer = new byte[1024];

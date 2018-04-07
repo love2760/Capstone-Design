@@ -12,7 +12,8 @@ public class resultActivity extends AppCompatActivity {
     Context ctx;
     imgprocessor imgproc;
     ImageView imgView;
-    //
+    TessOCR mtess;
+    String TAG = "resultActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +22,13 @@ public class resultActivity extends AppCompatActivity {
 
         setValue();
         imgView.setImageBitmap( imgproc.imgfilter(bitimg) );
+        Log.v(TAG,"OCR 결과 : "+mtess.requestOCR(bitimg));
     }
     private void setValue() {
         imgView = (ImageView) findViewById( R.id.resultimg );
         ctx = this;
         imgproc = new imgprocessor();
+        String dataPath = getExternalFilesDir(null).getAbsolutePath();
+        mtess = new TessOCR(dataPath);
     }
 }
