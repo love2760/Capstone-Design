@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetCam() {
         startCamera();
-        alertdialog();
+        showCheckForEquationAlertdialog();
     }
 
     private void refreshGallery(File file) {
@@ -495,24 +495,25 @@ public class MainActivity extends AppCompatActivity {
         } else { Log.d( TAG,"방향확인 실패" ); return 0; }
     }
 
-    private void alertdialog() {
+    private void showCheckForEquationAlertdialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder( MainActivity.this );
-        alert.setMessage("다음의 식이 맞습니까?").setCancelable( false ).setPositiveButton( "확인",
+        alert.setTitle("다음의 식이 맞습니까?").setMessage("여기는 식이 들어갈 자리~").setCancelable( false ).setPositiveButton( "확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        cameraShtBtn.setEnabled(true);
                         Intent i = new Intent( MainActivity.this,resultActivity.class );
+                        cameraShtBtn.setEnabled(true);
                         startActivity( i );
                     }
                 } ).setNegativeButton( "취소",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        cameraShtBtn.setEnabled(true);
                         return;
                     }
                 } );
-        AlertDialog alertDialog = alert.create();
+       //AlertDialog alertDialog = alert.create();
         alert.show();
     }
 

@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
  * Created by 김광현 on 2018-04-07.
  */
 
-public class imgProcessor {
+public class imgprocessor {
     // loadLibrary...
 
     static {
