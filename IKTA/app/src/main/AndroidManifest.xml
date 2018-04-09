@@ -30,8 +30,7 @@
         </activity>
         <!-- resultActivity 를 팝업창으로 띄움 -->
         <activity
-            android:name=".resultActivity"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+            android:name=".resultActivity"/>
     </application>
 
 </manifest>

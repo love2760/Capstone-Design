@@ -2,7 +2,6 @@ package ce.inu.ikta;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -58,15 +57,12 @@ public class MainActivity extends AppCompatActivity {
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
     boolean flag;
-    MainActivity aaa;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
-        mActivity = this;
-        aaa = this;
+
         setValue();
         setListener();
         setPermissions();
@@ -106,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     void setValue() {
+        mActivity = this;
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );
         flag =false;
