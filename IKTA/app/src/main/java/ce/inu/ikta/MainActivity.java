@@ -2,6 +2,7 @@ package ce.inu.ikta;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -146,15 +147,21 @@ public class MainActivity extends AppCompatActivity {
                 // 런타임 퍼미션 처리 필요
 
                 int hasCameraPermission = ContextCompat.checkSelfPermission( this, Manifest.permission.CAMERA );
+                int hasInternetPermission= ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+                int hasAccessNetworkStatePermission= ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
                 int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
                 if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                        && hasInternetPermission == PackageManager.PERMISSION_GRANTED
+                        && hasAccessNetworkStatePermission == PackageManager.PERMISSION_GRANTED
                         && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED
                         && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
                     //이미 퍼미션을 가지고 있음
                 } else {
                     //퍼미션 요청
                     ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.ACCESS_NETWORK_STATE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_CODE );
                 }
@@ -177,12 +184,18 @@ public class MainActivity extends AppCompatActivity {
 
             int hasCameraPermission = ContextCompat.checkSelfPermission( this,
                     Manifest.permission.CAMERA );
+            int hasInternetPermission = ContextCompat.checkSelfPermission( this,
+                    Manifest.permission.INTERNET);
+            int hasAccessNetworkStatePermission= ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_NETWORK_STATE);
             int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE );
             int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
                     Manifest.permission.READ_EXTERNAL_STORAGE );
 
             if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                    &&hasInternetPermission == PackageManager.PERMISSION_GRANTED
+                    &&hasAccessNetworkStatePermission == PackageManager.PERMISSION_GRANTED
                     && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED
                     && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
 
@@ -200,6 +213,10 @@ public class MainActivity extends AppCompatActivity {
     private void checkPermissions() {
         int hasCameraPermission = ContextCompat.checkSelfPermission( this,
                 Manifest.permission.CAMERA );
+        int hasInternetPermission = ContextCompat.checkSelfPermission( this,
+                Manifest.permission.INTERNET);
+        int hasAccessNetworkStatePermission= ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_NETWORK_STATE);
         int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE );
         int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
@@ -208,6 +225,10 @@ public class MainActivity extends AppCompatActivity {
 
         boolean cameraRationale = ActivityCompat.shouldShowRequestPermissionRationale( this,
                 Manifest.permission.CAMERA );
+        boolean internetRationale = ActivityCompat.shouldShowRequestPermissionRationale( this,
+                Manifest.permission.INTERNET);
+        boolean accessNetworkStateRationale = ActivityCompat.shouldShowRequestPermissionRationale( this,
+                Manifest.permission.ACCESS_NETWORK_STATE);
         boolean writeExternalStorageRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -216,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.READ_EXTERNAL_STORAGE);
 
         if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && cameraRationale)
+                || (hasInternetPermission == PackageManager.PERMISSION_DENIED && internetRationale)
+                || (hasAccessNetworkStatePermission == PackageManager.PERMISSION_DENIED && accessNetworkStateRationale)
                 || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
                 && readExternalStorageRationale)
                 || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
@@ -223,6 +246,8 @@ public class MainActivity extends AppCompatActivity {
             showDialogForPermission( "앱을 실행하려면 퍼미션을 허가하셔야합니다." );
 
         else if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && !cameraRationale)
+                || (hasInternetPermission == PackageManager.PERMISSION_DENIED && !internetRationale)
+                || (hasAccessNetworkStatePermission == PackageManager.PERMISSION_DENIED && !accessNetworkStateRationale)
                 || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
                 && !readExternalStorageRationale)
                 || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
@@ -231,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
                     "체크 박스를 설정한 경우로 설정에서 퍼미션 허가해야합니다." );
 
         else if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                || hasInternetPermission == PackageManager.PERMISSION_GRANTED
+                || hasAccessNetworkStatePermission == PackageManager.PERMISSION_GRANTED
                 || hasWriteExternalStoragePermission== PackageManager.PERMISSION_GRANTED
                 || hasReadExternalStoragePermission== PackageManager.PERMISSION_GRANTED ) {
             doRestart( this );
@@ -249,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 //퍼미션 요청
                 ActivityCompat.requestPermissions( MainActivity.this,
-                        new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.CAMERA,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSIONS_REQUEST_CODE );
             }
         } );
@@ -405,9 +432,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetCam() {
         startCamera();
-        cameraShtBtn.setEnabled(true);
-        Intent i = new Intent( MainActivity.this,resultActivity.class );
-        startActivity( i );
+        alertdialog();
     }
 
     private void refreshGallery(File file) {
@@ -471,6 +496,27 @@ public class MainActivity extends AppCompatActivity {
             Log.d( TAG,"방향4" );
             return 0;
         } else { Log.d( TAG,"방향확인 실패" ); return 0; }
+    }
+
+    private void alertdialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder( MainActivity.this );
+        alert.setMessage("다음의 식이 맞습니까?").setCancelable( false ).setPositiveButton( "확인",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cameraShtBtn.setEnabled(true);
+                        Intent i = new Intent( MainActivity.this,resultActivity.class );
+                        startActivity( i );
+                    }
+                } ).setNegativeButton( "취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                } );
+        AlertDialog alertDialog = alert.create();
+        alert.show();
     }
 
 
