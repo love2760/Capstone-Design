@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     Context ctx;
     OrientationEventListener orientEventListener;
     ImageButton cameraShtBtn;
-    int orientation;
-    private final static int PERMISSIONS_REQUEST_CODE = 100;
+    int orientation;    //방향전환을 위한 변수
+    private final static int PERMISSIONS_REQUEST_CODE = 0;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
     boolean flag;

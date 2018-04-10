@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -84,6 +82,7 @@ public class Adapter extends BaseExpandableListAdapter {
         String childlist = child.get( list.get( groupPosition ) ).get( childPosition );
         View view = convertView;
 
+        //뷰 초기화
         if (view == null) {
             //하위 그룹 뷰의 xml 생성
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -97,12 +96,7 @@ public class Adapter extends BaseExpandableListAdapter {
 
     @Override   //하위 그룹을 클릭할 것인지
     public boolean isChildSelectable( int groupPosition, int childPosition) {
-        return true;
-    }
-
-    //?????
-    public boolean areAllItemsEnable() {
-        return super.areAllItemsEnabled();
+        return false;
     }
 
     @Override   //같은 data 값을 생략시켜줌

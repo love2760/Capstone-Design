@@ -7,20 +7,43 @@
     android:orientation="vertical"
     tools:context="ce.inu.ikta.resultActivity">
 
-
+    <!-- 이미지 확인을 위해 임시로 넣음(보정이 안된 찍은 이미지를 출력) -->
     <ImageView
         android:id="@+id/resultimg"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         app:srcCompat="@color/colorAccent" />
 
+    <!-- 결과창을 보여줄 expandableListview -->
     <ExpandableListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="6"
         android:fastScrollEnabled="true"/>
+
+    <!-- 결과 저장/취소 버튼(저장 - 미구현 / 취소 - 초기화 필요) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/Save_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="저장"/>
+
+        <Button
+            android:id="@+id/Cancel_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="취소"/>
+
+    </LinearLayout>
 
 
 
