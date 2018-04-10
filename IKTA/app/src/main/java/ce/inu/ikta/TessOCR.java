@@ -10,7 +10,7 @@ package ce.inu.ikta;
 
 public class TessOCR {
     TessBaseAPI mtess;
-    TessOCR(String datapath) {
+    public TessOCR(String datapath) {
 
         mtess = new TessBaseAPI();
         mtess.init(datapath,"ikta");

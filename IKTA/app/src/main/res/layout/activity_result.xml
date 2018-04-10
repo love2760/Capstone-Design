@@ -12,30 +12,16 @@
         android:id="@+id/resultimg"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="1"
         app:srcCompat="@color/colorAccent" />
 
-
-    <LinearLayout
+    <ExpandableListView
+        android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/ok_btn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="확인"/>
+        android:fastScrollEnabled="true"/>
 
-        <Button
-            android:id="@+id/cancel_btn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="취소"/>
-
-    </LinearLayout>
 
 
 </LinearLayout>

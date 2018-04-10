@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static ce.inu.ikta.globalValue.bitimg;
+import static ce.inu.ikta.globalValue.dataPath;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );
         flag =false;
+        dataPath = getExternalFilesDir( null ).getAbsolutePath();
     }
     void setListener() {
         // 회전 리스너
@@ -148,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 int hasAccessNetworkStatePermission= ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
                 int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
                 if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
                         && hasInternetPermission == PackageManager.PERMISSION_GRANTED
                         && hasAccessNetworkStatePermission == PackageManager.PERMISSION_GRANTED
@@ -495,9 +498,11 @@ public class MainActivity extends AppCompatActivity {
         } else { Log.d( TAG,"방향확인 실패" ); return 0; }
     }
 
+    //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private void showCheckForEquationAlertdialog() {
+        TessOCR tessOCR = new TessOCR(getExternalFilesDir( null ).getAbsolutePath());
         AlertDialog.Builder alert = new AlertDialog.Builder( MainActivity.this );
-        alert.setTitle("다음의 식이 맞습니까?").setMessage("여기는 식이 들어갈 자리~").setCancelable( false ).setPositiveButton( "확인",
+        alert.setTitle("다음의 식이 맞습니까?").setMessage(tessOCR.requestOCR( bitimg )).setCancelable( false ).setPositiveButton( "확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
