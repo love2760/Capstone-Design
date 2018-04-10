@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private final static int PERMISSIONS_REQUEST_CODE = 0;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
-    boolean flag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         setPermissions();
         copyTrainData();
     }
+    /*
+     * 2018 04 09 김광현
+     * traineddata에 접근하기 위해서는 파일이 존재하는
+     * 디렉토리의 절대경로를 알아야 하기 때문에 assets에 존재하는
+     * traineddata를 외부 저장소에 옮겨서 해당 저장소 경로를 가르키도록
+     * 하기위해 외부 저장소로 옮기는 작업을 하는 메소드
+     */
     private void copyTrainData() {
         AssetManager assetManager = getAssets();
         InputStream in = null;
@@ -101,14 +107,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    //각종 value 설정
     void setValue() {
         mActivity = this;
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );
-        flag =false;
-        dataPath = getExternalFilesDir( null ).getAbsolutePath();
+        dataPath = getExternalFilesDir( null ).getAbsolutePath(); // 테서렉트 traineddata 가 저장되는 외부 저장소 위치
     }
+    //각종 리스너 선언
     void setListener() {
         // 회전 리스너
         orientEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
@@ -139,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // 각종 권한 취득
+    // 카메라 권한
+    // 외부 저장소 읽기 / 쓰기 권한
     void setPermissions() {
         if (getPackageManager().hasSystemFeature( PackageManager.FEATURE_CAMERA )) {
 
