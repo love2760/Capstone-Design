@@ -23,7 +23,7 @@
         android:layout_weight="6"
         android:fastScrollEnabled="true"/>
 
-    <!-- 결과 저장/취소 버튼(저장 - 미구현 / 취소 - 초기화 필요) -->
+    <!-- 결과 저장/취소 버튼(저장 - 미구현) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -88,6 +88,9 @@ public class Adapter extends BaseExpandableListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
             view = inflater.inflate( R.layout.result_child, null );
         }
+
+
+
         TextView textChild = (TextView) view.findViewById( R.id.child );
         textChild.setText( childlist );
 

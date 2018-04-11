@@ -22,14 +22,17 @@ public class wolframalpha {
         query.setInput(input);
         String sinput ="empty";
         String answer ="empty";
-
+        Log.d( TAG, "시작" );
         try {
+            Log.d( TAG, "try 진입" );
+
             WAQueryResult queryResult = engine.performQuery(query);
+            Log.d(TAG, "쿼리 결과 받앗어요");
             if (queryResult.isError()) {
-                Log.v( TAG, "  error message: " + queryResult.getErrorMessage() );
+                Log.d( TAG, "  error message: " + queryResult.getErrorMessage() );
             }
             else if (!queryResult.isSuccess()) {
-                Log.v( TAG, "Query was not understood; no results available." );
+                Log.d( TAG, "Query was not understood; no results available." );
             } else {
                 for (WAPod pod : queryResult.getPods()) {
                     if (!pod.isError()) {
@@ -61,6 +64,8 @@ public class wolframalpha {
                     }
                 }
             }
+
+            Log.d( TAG, "try종료" );
         }
         catch (WAException e) {
             e.printStackTrace();

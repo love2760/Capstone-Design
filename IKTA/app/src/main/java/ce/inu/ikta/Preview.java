@@ -4,9 +4,6 @@ package ce.inu.ikta;
  * Created by NyuNyu on 2018-03-22.
  */
 
-import java.io.IOException;
-import java.util.List;
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -15,6 +12,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.io.IOException;
+import java.util.List;
 
 
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
@@ -40,12 +40,14 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
     public void setCamera(Camera camera) {
         if (mCamera != null) {
+            //카메라에 기존 값이 들어있으면 일단 프리뷰를 멈춤
             // Call stopPreview() to stop updating the preview surface.
             mCamera.stopPreview();
 
             // Important: Call release() to release the camera for use by other
             // applications. Applications should release the camera immediately
             // during onPause() and re-open() it during onResume()).
+
             mCamera.release();
 
             mCamera = null;
