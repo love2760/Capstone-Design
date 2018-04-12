@@ -97,6 +97,8 @@ public class Adapter extends BaseExpandableListAdapter {
         return view;
     }
 
+
+
     @Override   //하위 그룹을 클릭할 것인지
     public boolean isChildSelectable( int groupPosition, int childPosition) {
         return false;

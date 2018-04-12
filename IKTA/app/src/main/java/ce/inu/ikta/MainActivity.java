@@ -30,8 +30,8 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
             preview = new Preview( this, (SurfaceView) findViewById( R.id.cameraView) );
             preview.setLayoutParams( new LayoutParams( LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT ) );  //프리뷰 크기 정함
-            ((FrameLayout) findViewById( R.id.layout )).addView( preview );
+            ((RelativeLayout) findViewById( R.id.layout )).addView( preview );
             preview.setKeepScreenOn( true );    //화면을 켠 상태로 유지
 
         }
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
             camera = null;
         }
 
-        ((FrameLayout) findViewById( R.id.layout )).removeView( preview );
+        ((RelativeLayout) findViewById( R.id.layout )).removeView( preview );
         preview = null;
 
     }

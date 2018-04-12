@@ -30,24 +30,22 @@ public class resultActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
-        Log.d(TAG,"두 번째 액티비티 시작");
-        listView = (ExpandableListView) this.findViewById( R.id.listview ) ;    //리스트뷰 초기화
-        setListData();  //expandableListview에 들어갈 data 생성
-        Log.d(TAG,"adapter 시작");
-        listView.setAdapter( new Adapter( this, grplist, child ) );    //adapter 적용
+
+
+        setAdaptering();
 
         setButton();    //저장/취소 버튼
 
         setValue(); //이미지 뷰
         imgView.setImageBitmap( bitimg );   //이미지 뷰에 사진을 넣음
     }
+
     private void setValue() {
         imgView = (ImageView) findViewById( R.id.resultimg );
         ctx = this;
     }
 
     //리스트뷰 구성
-
     private void setListData() {
 
         Log.d(TAG, "data 넣기");
@@ -70,6 +68,30 @@ public class resultActivity extends AppCompatActivity {
         child.put(grplist.get(1), answer);
         child.put(grplist.get(2), graph);
         child.put(grplist.get(3), solution);
+    }
+
+    private void setAdaptering() {
+        listView = (ExpandableListView) this.findViewById( R.id.listview ) ;    //리스트뷰 초기화
+        setListData();  //expandableListview에 들어갈 data 생성
+        listView.setAdapter( new Adapter( this, grplist, child ) );    //adapter 적용
+
+        //시작시 확장된 상태
+        int groupCount = grplist.size();
+        for(int i = 0 ; i < groupCount ; i++) {
+            listView.expandGroup( i );
+        }
+
+        //1,2번째 확장 상태로 고정
+        listView.setOnGroupCollapseListener( new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                listView.expandGroup(0);
+                listView.expandGroup(1);
+            }
+        } );
+
+        //기본 화살표 아이콘 삭제
+        listView.setGroupIndicator( null );
     }
 
     //버튼 리스너 부여
