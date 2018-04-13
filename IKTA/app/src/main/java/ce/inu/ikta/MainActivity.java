@@ -63,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        //Log.d("울프람울프람",asd);
+
         wolframalpha wolf = new wolframalpha();
         wolf.Wolfoutput("1+1");
+        Log.d("울프람울프람",wolf.Wolfoutput("1+1").answer);
         setValue();
         setListener();
         setPermissions();

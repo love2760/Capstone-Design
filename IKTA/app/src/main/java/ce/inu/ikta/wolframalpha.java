@@ -16,7 +16,6 @@ public class wolframalpha {
     final String TAG = "wolfram";
     wolfData output;
 
-
     public wolfData requestWolf(String input) {
         WAEngine engine = new WAEngine();
         engine.setAppID( appid );
@@ -72,18 +71,26 @@ public class wolframalpha {
     }
 
     public wolfData Wolfoutput(final String input) {
-        new Thread() {
+        final wolfData[] dataout = new wolfData[1];
+
+        Thread a = new Thread() {
             public void run() {
-                wolfData dataout;
                 String in1 = input;
                 Log.d( TAG, in1 );
-                dataout = requestWolf(in1);
-                Log.d(TAG, dataout.answer);
-                Log.d(TAG, dataout.input);
+                dataout[0] = requestWolf(in1);
+                Log.d(TAG, dataout[0].answer);
+                Log.d(TAG, dataout[0].input);
             }
-        }.start();
+        };
+        a.start();
+        try {
+            a.join();
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Log.d( TAG, "스레드종료" );
-        output = new wolfData( "empty" , "empty" , "empty", "empty" );
+        output =dataout[0];
         return output;
     }
 }
