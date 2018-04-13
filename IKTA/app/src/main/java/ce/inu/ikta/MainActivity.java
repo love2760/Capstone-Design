@@ -85,17 +85,16 @@ public class MainActivity extends AppCompatActivity {
         OutputStream out = null;
         String ASSET_FILE_PATH = "tessdata/ikta.traineddata";
         String FILENAME = "tessdata/ikta.traineddata";
-        String TESSDATAPATH = getExternalFilesDir(null).getAbsolutePath()+"/tessdata";
-
+        // TESSDATAPATH = getFilesDir().getAbsolutePath()+"/tessdata";
         try {
             in = assetManager.open(ASSET_FILE_PATH);
             Log.v(TAG,"assets 파일 오픈 성공");
-            Log.v(TAG,"폴더 이름 "+getExternalFilesDir(null).getAbsolutePath());
-            File tessDataFolder = new File(getExternalFilesDir(null).getAbsolutePath(),"tessdata");
+            Log.v(TAG,"폴더 이름 "+getFilesDir().getAbsolutePath());
+            File tessDataFolder = new File(getFilesDir().getAbsolutePath(),"tessdata");
             if(!tessDataFolder.exists()) {
                 tessDataFolder.mkdirs();
             }
-            File outFile = new File(getExternalFilesDir(null), FILENAME);
+            File outFile = new File(getFilesDir(), FILENAME);
             out = new FileOutputStream(outFile);
             byte[] buffer = new byte[1024];
             int read;
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
-        dataPath = getExternalFilesDir( null ).getAbsolutePath(); // 테서렉트 traineddata 가 저장되는 외부 저장소 위치
+        dataPath = getFilesDir().getAbsolutePath(); // 테서렉트 traineddata 가 저장되는 외부 저장소 위치
     }
     //각종 리스너 선언
     void setListener() {
@@ -483,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
 
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private void showCheckForEquationAlertdialog() {
-        TessOCR tessOCR = new TessOCR(getExternalFilesDir( null ).getAbsolutePath());
+        TessOCR tessOCR = new TessOCR(getFilesDir().getAbsolutePath());
         AlertDialog.Builder alert = new AlertDialog.Builder( MainActivity.this );
         imgprocessor a = new imgprocessor();
 
