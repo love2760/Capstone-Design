@@ -30,7 +30,9 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import static ce.inu.ikta.globalValue.bitimg;
 import static ce.inu.ikta.globalValue.dataPath;
@@ -51,26 +54,36 @@ public class MainActivity extends AppCompatActivity {
     Preview preview;
     Camera camera;
     Context ctx;
+    CutImage cutImage;
     OrientationEventListener orientEventListener;
     ImageButton cameraShtBtn;
     int orientation;    //방향전환을 위한 변수
-    private final static int PERMISSIONS_REQUEST_CODE = 100;
+    RelativeLayout relativeLayout;
+    SurfaceView surfaceView;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
+    PERM_main_activity perm_main_activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
+        //relativeLayout = (RelativeLayout) findViewById( R.id.box );
+        //relativeLayout.setBackgroundResource( R.drawable.outline );
+        //surfaceView = (SurfaceView) findViewById( R.id.cameraView );
 
-        wolframalpha wolf = new wolframalpha();
-        wolf.Wolfoutput("1+1");
-        Log.d("울프람울프람",wolf.Wolfoutput("1+1").answer);
+        //wolframalpha wolf = new wolframalpha();
+        //wolf.Wolfoutput("1+1");
+        //Log.d("울프람울프람",wolf.Wolfoutput("1+1").answer);
+
+        //cutImage = (CutImage) findViewById( R.id.showCustom );
+
         setValue();
         setListener();
-        setPermissions();
+        perm_main_activity.setPermissions();
         copyTrainData();
+
     }
 
     /*
@@ -117,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         dataPath = getFilesDir().getAbsolutePath(); // 테서렉트 traineddata 가 저장되는 외부 저장소 위치
+        perm_main_activity = new PERM_main_activity( this,this );
     }
     //각종 리스너 선언
     void setListener() {
@@ -152,35 +166,8 @@ public class MainActivity extends AppCompatActivity {
 
     //각종 권한을 갖고 있는지 확인
     //없다면 요청
-    void setPermissions() {
-        if (getPackageManager().hasSystemFeature( PackageManager.FEATURE_CAMERA )) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { //API 23 이상이면
-                // 런타임 퍼미션 처리 필요
-
-                //현재 권한 상태 넣음
-                int hasCameraPermission = ContextCompat.checkSelfPermission( this, Manifest.permission.CAMERA );
-                int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
-                        && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED
-                        && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
-                    //이미 퍼미션을 가지고 있음
-                } else {
-                    //퍼미션 요청
-                    ActivityCompat.requestPermissions( this, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_CODE );
-                }
-            }
 
 
-        } else {
-            Toast.makeText( MainActivity.this, "Camera not supported",
-                    Toast.LENGTH_LONG ).show();
-        }
-    }
 
     //권한 확인
     @Override
@@ -188,14 +175,14 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
 
-        if (requestCode == PERMISSIONS_REQUEST_CODE && grandResults.length > 0) {
+        if (requestCode == perm_main_activity.getPermissionsRequestCode() && grandResults.length > 0) {
 
             //권한 상태 불러옴
-            int hasCameraPermission = ContextCompat.checkSelfPermission( this,
+            int hasCameraPermission = ContextCompat.checkSelfPermission( ctx,
                     Manifest.permission.CAMERA );
-            int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+            int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE );
-            int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
+            int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
                     Manifest.permission.READ_EXTERNAL_STORAGE );
 
             if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
@@ -203,153 +190,16 @@ public class MainActivity extends AppCompatActivity {
                     && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
 
                 //이미 퍼미션을 가지고 있음
-                doRestart( this );
+                perm_main_activity.doRestart( this );
             } else {
-                checkPermissions();
+                perm_main_activity.checkPermissions();
             }
         }
 
     }
 
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissions() {
-        //권한 상태 저장
-        int hasCameraPermission = ContextCompat.checkSelfPermission( this,
-                Manifest.permission.CAMERA );
-        int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE );
-        int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( this,
-                Manifest.permission.READ_EXTERNAL_STORAGE );
 
-        //Manifest에 선언됐는지 확인
-        boolean cameraRationale = ActivityCompat.shouldShowRequestPermissionRationale( this,
-                Manifest.permission.CAMERA );
-        boolean writeExternalStorageRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        boolean readExternalStorageRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && cameraRationale)
-                || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
-                && readExternalStorageRationale)
-                || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
-                && writeExternalStorageRationale))
-            showDialogForPermission( "앱을 실행하려면 퍼미션을 허가하셔야합니다." );
-
-        else if ((hasCameraPermission == PackageManager.PERMISSION_DENIED && !cameraRationale)
-                || (hasReadExternalStoragePermission== PackageManager.PERMISSION_DENIED
-                && !readExternalStorageRationale)
-                || (hasWriteExternalStoragePermission== PackageManager.PERMISSION_DENIED
-                && !writeExternalStorageRationale))
-            showDialogForPermissionSetting( "퍼미션 거부 + Don't ask again(다시 묻지 않음) " +
-                    "체크 박스를 설정한 경우로 설정에서 퍼미션 허가해야합니다." );
-
-        else if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
-                || hasWriteExternalStoragePermission== PackageManager.PERMISSION_GRANTED
-                || hasReadExternalStoragePermission== PackageManager.PERMISSION_GRANTED ) {
-            doRestart( this );
-        }
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void showDialogForPermission(String msg) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder( MainActivity.this );
-        builder.setTitle( "알림" );
-        builder.setMessage( msg );
-        builder.setCancelable( false );
-        builder.setPositiveButton( "예", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //퍼미션 요청
-                ActivityCompat.requestPermissions( MainActivity.this,
-                        new String[]{Manifest.permission.CAMERA,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMISSIONS_REQUEST_CODE );
-            }
-        } );
-
-        builder.setNegativeButton( "아니오", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        } );
-        builder.create().show();
-    }
-
-    private void showDialogForPermissionSetting(String msg) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder( MainActivity.this );
-        builder.setTitle( "알림" );
-        builder.setMessage( msg );
-        builder.setCancelable( true );
-        builder.setPositiveButton( "예", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-                Intent myAppSettings = new Intent( Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse( "package:" + mActivity.getPackageName() ) );
-                myAppSettings.addCategory( Intent.CATEGORY_DEFAULT );
-                myAppSettings.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-                mActivity.startActivity( myAppSettings );
-            }
-        } );
-        builder.setNegativeButton( "아니오", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        } );
-        builder.create().show();
-    }
-
-
-
-
-    //앱 재시작
-    public static void doRestart(Context c) {
-        //http://stackoverflow.com/a/22345538
-        try {
-            //주어진 context 확인
-            if (c != null) {
-                //fetch the packagemanager so we can get the default launch activity
-                // (you can replace this intent with any other activity if you want
-                PackageManager pm = c.getPackageManager();
-                //check if we got the PackageManager
-                if (pm != null) {
-                    //create the intent with the default start activity for your application
-                    Intent mStartActivity = pm.getLaunchIntentForPackage(
-                            c.getPackageName()
-                    );
-                    if (mStartActivity != null) {
-                        //
-                        mStartActivity.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                        //create a pending intent so the application is restarted
-                        // after System.exit(0) was called.
-                        // We use an AlarmManager to call this intent in 100ms
-                        int mPendingIntentId = 223344;
-                        PendingIntent mPendingIntent = PendingIntent
-                                .getActivity( c, mPendingIntentId, mStartActivity,
-                                        PendingIntent.FLAG_CANCEL_CURRENT );
-                        AlarmManager mgr =
-                                (AlarmManager) c.getSystemService( Context.ALARM_SERVICE );
-                        mgr.set( AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent );
-                        //kill the application
-                        System.exit( 0 );
-                    } else {
-                        Log.e( TAG, "Was not able to restart application, " +
-                                "mStartActivity null" );
-                    }
-                } else {
-                    Log.e( TAG, "Was not able to restart application, PM null" );
-                }
-            } else {
-                Log.e( TAG, "Was not able to restart application, Context null" );
-            }
-        } catch (Exception ex) {
-            Log.e( TAG, "Was not able to restart application" );
-        }
-    }
 
     public void startCamera() {
 
@@ -377,6 +227,13 @@ public class MainActivity extends AppCompatActivity {
 
                 camera = Camera.open( CAMERA_FACING );  //후면 카메라 불러옴
                 camera.setDisplayOrientation( 90 ); //방향 고정
+                List<Camera.Size> tmp = camera.getParameters().getSupportedPictureSizes();
+                Camera.Size Max = tmp.get(0);
+                for(int i = 0 ; i < tmp.size() ; i++) {
+                    if( tmp.get( i ).width*tmp.get( i ).height > Max.width*Max.height)
+                        Max =tmp.get(i);
+                }
+                camera.getParameters().setPictureSize( Max.width,Max.height );
                 camera.startPreview();  //프리뷰 시작
 
             } catch (RuntimeException ex) {
@@ -442,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             //이미지의 너비와 높이 결정
-            int w = camera.getParameters().getPictureSize().width;
+            int w= camera.getParameters().getPictureSize().width;
             int h = camera.getParameters().getPictureSize().height;
 
             //byte array를 bitmap으로 변환
@@ -453,7 +310,8 @@ public class MainActivity extends AppCompatActivity {
             //이미지를 디바이스 방향으로 회전
             Matrix matrix = new Matrix();
             matrix.postRotate( checkDeviceOrientation( orientation ) );
-            bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
+
+            bitimg = Bitmap.createBitmap( bitimg, 0, 0, 1000, 1000, matrix, true );
 
             Log.d( TAG,"bitmapCallback close" );
             resetCam();
@@ -506,5 +364,35 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /*
+    private int[] r_size() {
+        final int R_int[] = new int[2];
+        ViewTreeObserver viewTreeObserver_i = relativeLayout.getViewTreeObserver();
+        viewTreeObserver_i.addOnGlobalLayoutListener( new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                relativeLayout.getViewTreeObserver().removeOnGlobalLayoutListener( this );
+                R_int[0] = relativeLayout.getMeasuredWidth();
+                R_int[1] = relativeLayout.getMeasuredHeight();
+                Log.d(TAG,"R_width "+R_int[0]+" R_height "+R_int[1]);
+            }
+        } );
+        return R_int;
+    }
+
+    private int[] s_size() {
+        final int S_int[] = new int[2];
+        ViewTreeObserver viewTreeObserver_s = surfaceView.getViewTreeObserver();
+        viewTreeObserver_s.addOnGlobalLayoutListener( new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                surfaceView.getViewTreeObserver().removeOnGlobalLayoutListener( this );
+                S_int[0] = surfaceView.getMeasuredWidth();
+                S_int[1] = surfaceView.getMeasuredHeight();
+                Log.d(TAG,"s_width "+S_int[0]+" s_height "+S_int[1]);
+            }
+        } );
+        return S_int;
+    }*/
 
 }
