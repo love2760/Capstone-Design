@@ -76,28 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
-
-        if (requestCode == requestPerm.getPermissionsRequestCode() && grandResults.length > 0) {
-
-            //권한 상태 불러옴
-            int hasCameraPermission = ContextCompat.checkSelfPermission( ctx,
-                    Manifest.permission.CAMERA );
-            int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE );
-            int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
-                    Manifest.permission.READ_EXTERNAL_STORAGE );
-
-            if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
-                    && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED
-                    && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
-
-                //이미 퍼미션을 가지고 있음
-                requestPerm.doRestart( this );
-            } else {
-                requestPerm.checkPermissions();
-            }
-        }
-
+        requestPerm.monRequestPermissionsResult(requestCode,permissions,grandResults);
     }
 
     @Override

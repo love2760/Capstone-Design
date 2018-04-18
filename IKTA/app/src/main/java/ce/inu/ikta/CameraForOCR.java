@@ -75,8 +75,6 @@ public class CameraForOCR {
                 camera.startPreview();  //프리뷰 시작
 
             } catch (RuntimeException ex) {
-                Toast.makeText( ctx, "camera_not_found " + ex.getMessage().toString(),
-                        Toast.LENGTH_LONG ).show();
                 Log.d( TAG, "camera_not_found " + ex.getMessage().toString() );
             }
         }

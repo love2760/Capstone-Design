@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by NyuNyu on 2018-04-17.
@@ -200,7 +199,30 @@ public class RequestPerm {
             Log.e( "RequestPerm", "Was not able to restart application" );
         }
     }
+    public void monRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grandResults) {
+        if (requestCode == getPermissionsRequestCode() && grandResults.length > 0) {
 
+            //권한 상태 불러옴
+            int hasCameraPermission = ContextCompat.checkSelfPermission( ctx,
+                    Manifest.permission.CAMERA );
+            int hasWriteExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE );
+            int hasReadExternalStoragePermission = ContextCompat.checkSelfPermission( ctx,
+                    Manifest.permission.READ_EXTERNAL_STORAGE );
+
+            if (hasCameraPermission == PackageManager.PERMISSION_GRANTED
+                    && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED
+                    && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
+
+                //이미 퍼미션을 가지고 있음
+                doRestart( ctx );
+            } else {
+                checkPermissions();
+            }
+        }
+    }
 
 
 }
