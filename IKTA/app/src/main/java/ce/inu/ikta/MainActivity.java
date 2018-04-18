@@ -1,9 +1,6 @@
 package ce.inu.ikta;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,11 +14,8 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.SensorManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,9 +24,7 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -62,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
     SurfaceView surfaceView;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     public AppCompatActivity mActivity;
-    PERM_main_activity perm_main_activity;
-
+    RequestPerm requestPerm;
+    TessOCR tessOCR;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -81,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         setValue();
         setListener();
-        perm_main_activity.setPermissions();
-        copyTrainData();
+        requestPerm.setPermissions();
 
     }
 
@@ -93,44 +84,15 @@ public class MainActivity extends AppCompatActivity {
      * traineddata를 외부 저장소에 옮겨서 해당 저장소 경로를 가르키도록
      * 하기위해 외부 저장소로 옮기는 작업을 하는 메소드
      */
-    private void copyTrainData() {
-        AssetManager assetManager = getAssets();
-        InputStream in = null;
-        OutputStream out = null;
-        String ASSET_FILE_PATH = "tessdata/ikta.traineddata";
-        String FILENAME = "tessdata/ikta.traineddata";
-        // TESSDATAPATH = getFilesDir().getAbsolutePath()+"/tessdata";
-        try {
-            in = assetManager.open(ASSET_FILE_PATH);
-            Log.v(TAG,"assets 파일 오픈 성공");
-            Log.v(TAG,"폴더 이름 "+getFilesDir().getAbsolutePath());
-            File tessDataFolder = new File(getFilesDir().getAbsolutePath(),"tessdata");
-            if(!tessDataFolder.exists()) {
-                tessDataFolder.mkdirs();
-            }
-            File outFile = new File(getFilesDir(), FILENAME);
-            out = new FileOutputStream(outFile);
-            byte[] buffer = new byte[1024];
-            int read;
-            while((read = in.read(buffer)) != -1){
-                out.write(buffer, 0, read);
-            }
-            Log.v(TAG,"파일 쓰기 성공");
-        }catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(in != null) try {in.close();}catch(IOException e){/*nothing*/}
-            if(out != null) try {out.close();}catch(IOException e){/*nothing*/}
-        }
-    }
+
 
     //각종 value 설정
     void setValue() {
         mActivity = this;
         ctx = this;
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
-        dataPath = getFilesDir().getAbsolutePath(); // 테서렉트 traineddata 가 저장되는 외부 저장소 위치
-        perm_main_activity = new PERM_main_activity( this,this );
+        requestPerm = new RequestPerm( this,this );
+        tessOCR = new TessOCR(ctx);
     }
     //각종 리스너 선언
     void setListener() {
@@ -175,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
 
-        if (requestCode == perm_main_activity.getPermissionsRequestCode() && grandResults.length > 0) {
+        if (requestCode == requestPerm.getPermissionsRequestCode() && grandResults.length > 0) {
 
             //권한 상태 불러옴
             int hasCameraPermission = ContextCompat.checkSelfPermission( ctx,
@@ -190,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
                     && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED) {
 
                 //이미 퍼미션을 가지고 있음
-                perm_main_activity.doRestart( this );
+                requestPerm.doRestart( this );
             } else {
-                perm_main_activity.checkPermissions();
+                requestPerm.checkPermissions();
             }
         }
 
@@ -341,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
 
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private void showCheckForEquationAlertdialog() {
-        TessOCR tessOCR = new TessOCR(getFilesDir().getAbsolutePath());
         AlertDialog.Builder alert = new AlertDialog.Builder( MainActivity.this );
         imgprocessor a = new imgprocessor();
 

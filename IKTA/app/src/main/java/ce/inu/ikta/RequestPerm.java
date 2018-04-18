@@ -23,11 +23,11 @@ import android.widget.Toast;
  * Created by NyuNyu on 2018-04-17.
  */
 
-public class PERM_main_activity {
+public class RequestPerm {
     private final static int PERMISSIONS_REQUEST_CODE = 100;
     Context ctx;
     Activity activity;
-    public PERM_main_activity(Context ctx, Activity activity) {
+    public RequestPerm(Context ctx, Activity activity) {
         this.ctx = ctx;
         this.activity = activity;
     }
@@ -188,17 +188,17 @@ public class PERM_main_activity {
                         //kill the application
                         System.exit( 0 );
                     } else {
-                        Log.e( "PERM_main_activity", "Was not able to restart application, " +
+                        Log.e( "RequestPerm", "Was not able to restart application, " +
                                 "mStartActivity null" );
                     }
                 } else {
-                    Log.e( "PERM_main_activity", "Was not able to restart application, PM null" );
+                    Log.e( "RequestPerm", "Was not able to restart application, PM null" );
                 }
             } else {
-                Log.e( "PERM_main_activity", "Was not able to restart application, Context null" );
+                Log.e( "RequestPerm", "Was not able to restart application, Context null" );
             }
         } catch (Exception ex) {
-            Log.e( "PERM_main_activity", "Was not able to restart application" );
+            Log.e( "RequestPerm", "Was not able to restart application" );
         }
     }
 
