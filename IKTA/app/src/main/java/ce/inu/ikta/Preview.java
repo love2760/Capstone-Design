@@ -20,7 +20,6 @@ import java.util.List;
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "Preview";
 
-    CutImage cutImage;
     SurfaceView mSurfaceView;
     SurfaceHolder mHolder;
     Size mPreviewSize;

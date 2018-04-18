@@ -65,7 +65,6 @@ public class RequestPerm {
 
 
 
-
     @TargetApi(Build.VERSION_CODES.M)
     public void checkPermissions() {
         //권한 상태 저장
