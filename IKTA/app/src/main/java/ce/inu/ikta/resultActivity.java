@@ -18,7 +18,7 @@ import static ce.inu.ikta.globalValue.bitimg;
 public class resultActivity extends AppCompatActivity {
     Context ctx;
     ImageView imgView;
-    CutImage cutImage;
+    MyView myView;
     String TAG = "resultActivity";
     ExpandableListView listView;
     private ArrayList<String> grplist = new ArrayList<String>(); //상위 리스트

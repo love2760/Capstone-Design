@@ -1,24 +1,20 @@
 package ce.inu.ikta;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import java.io.File;
-
-import static ce.inu.ikta.globalValue.bitimg;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
+        MyView myView = new MyView( this );
+        addContentView( myView, new RelativeLayout.LayoutParams
+                ( RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT ));
         setValue();
         setListener();
         requestPerm.setPermissions();

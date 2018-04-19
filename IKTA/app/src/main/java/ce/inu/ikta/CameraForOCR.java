@@ -118,7 +118,7 @@ public class CameraForOCR {
             Matrix matrix = new Matrix();
             matrix.postRotate( checkDeviceOrientation( orientation ) );
 
-            bitimg = Bitmap.createBitmap( bitimg, 0, 0, 1000, 1000, matrix, true );
+            bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
 
             Log.d( TAG,"bitmapCallback close" );
             reset();
