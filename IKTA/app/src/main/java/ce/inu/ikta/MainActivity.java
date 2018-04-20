@@ -9,11 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.OrientationEventListener;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.io.File;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RequestPerm requestPerm;
     CameraForOCR camera;
     MyView myView;
+    LinearLayout asd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView( R.layout.activity_main );
         setValue();
         myView = new MyView( ctx, getDisplay() );
-        addContentView( myView, new RelativeLayout.LayoutParams
-                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT ));
+
+        asd.addView( myView, new RelativeLayout.LayoutParams
+                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        );
         setListener();
         requestPerm.setPermissions();
     }
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     void setValue() {
         mActivity = this;
         ctx = this;
+        asd = (LinearLayout) findViewById(R.id.cameraTopView);
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         requestPerm = new RequestPerm( this,this );
         camera = new CameraForOCR(ctx,mActivity);
