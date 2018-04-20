@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
@@ -26,16 +28,25 @@ public class MainActivity extends AppCompatActivity {
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
     CameraForOCR camera;
+    MyView myView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
-        MyView myView = new MyView( this );
-        addContentView( myView, new RelativeLayout.LayoutParams
-                ( RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT ));
         setValue();
+        myView = new MyView( ctx, getDisplay() );
+        addContentView( myView, new RelativeLayout.LayoutParams
+                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT ));
         setListener();
         requestPerm.setPermissions();
+    }
+
+    public float[] getDisplay() {
+        Display display = ((WindowManager) getSystemService( Context.WINDOW_SERVICE )).getDefaultDisplay();
+        float[] info = {display.getWidth(), display.getHeight()};
+
+        return info;
     }
 
     //각종 value 설정
@@ -64,8 +75,16 @@ public class MainActivity extends AppCompatActivity {
         cameraShtBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cameraShtBtn.setEnabled(false); //버튼이 눌렸을 때 버튼을 비활성화
-                camera.takePicture();
+                if(v.getId() == R.id.cameraShutterBtn) {
+                    //v.setVisibility( View.VISIBLE );
+                    //myView.setVisibility( View.GONE );
+                    cameraShtBtn.setEnabled( false ); //버튼이 눌렸을 때 버튼을 비활성화
+                    camera.takePicture();
+                }
+                else {
+                    //v.setVisibility( View.GONE );
+                    //myView.setVisibility( View.VISIBLE );
+                }
             }
         } );
     }
