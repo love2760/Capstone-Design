@@ -24,6 +24,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     Size mPreviewSize;
     List<Size> mSupportedPreviewSizes;
+    List<Size> mSupportedPictureSizes;
     Camera mCamera;
 
     Preview(Context context, SurfaceView sv ) {
@@ -56,7 +57,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         mCamera = camera;
         if (mCamera != null) {
             List<Size> localSizes = mCamera.getParameters().getSupportedPreviewSizes();
+            List<Size> localPictureSizes = mCamera.getParameters().getSupportedPictureSizes();
             mSupportedPreviewSizes = localSizes;
+            mSupportedPictureSizes = localPictureSizes;
             requestLayout();
 
             // get Camera parameters
@@ -181,6 +184,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
         return optimalSize;
     }
+
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if ( mCamera != null) {
