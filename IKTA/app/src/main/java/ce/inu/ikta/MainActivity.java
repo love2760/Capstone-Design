@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -31,34 +33,35 @@ public class MainActivity extends AppCompatActivity {
     RequestPerm requestPerm;
     CameraForOCR camera;
     MyView myView;
-    LinearLayout asd;
+    LinearLayout linearLayout;
+    float width, height;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
         setValue();
-        myView = new MyView( ctx, getDisplay() );
-
-        asd.addView( myView, new RelativeLayout.LayoutParams
-                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-        );
         setListener();
         requestPerm.setPermissions();
     }
 
-    public float[] getDisplay() {
-        Display display = ((WindowManager) getSystemService( Context.WINDOW_SERVICE )).getDefaultDisplay();
-        float[] info = {display.getWidth(), display.getHeight()};
-
-        return info;
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
+        width = linearLayout.getWidth();
+        height = linearLayout.getHeight();
+        Log.d(TAG,"width "+width+"  height "+height);
+        myView = new MyView( ctx, width, height );
+        linearLayout.addView( myView, new RelativeLayout.LayoutParams
+                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        );
     }
 
     //각종 value 설정
     void setValue() {
         mActivity = this;
         ctx = this;
-        asd = (LinearLayout) findViewById(R.id.cameraTopView);
+        linearLayout = (LinearLayout) findViewById(R.id.cameraTopView);
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         requestPerm = new RequestPerm( this,this );
         camera = new CameraForOCR(ctx,mActivity);

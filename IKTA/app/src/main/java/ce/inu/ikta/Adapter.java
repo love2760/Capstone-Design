@@ -86,12 +86,12 @@ public class Adapter extends BaseExpandableListAdapter {
         if (view == null) {
             //하위 그룹 뷰의 xml 생성
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            view = inflater.inflate( R.layout.result_child, null );
+            view = inflater.inflate( R.layout.result_childtxt, null );
         }
 
 
 
-        TextView textChild = (TextView) view.findViewById( R.id.child );
+        TextView textChild = (TextView) view.findViewById( R.id.childtxt );
         textChild.setText( childlist );
 
         return view;
