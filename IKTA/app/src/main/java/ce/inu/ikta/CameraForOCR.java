@@ -31,7 +31,7 @@ public class CameraForOCR {
     Activity mactivity;
     Camera camera;
     TessOCR mtessOCR;
-    int orientation;
+    MyView myView;
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     final String TAG = "CameraForOCR.java";
     public CameraForOCR(Context ctx, Activity mactivity) {
@@ -115,35 +115,13 @@ public class CameraForOCR {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;    //디코딩 방식을 ARGB_8888로 설정
             bitimg = BitmapFactory.decodeByteArray( data, 0, data.length, options );    //디코딩
 
-            //이미지를 디바이스 방향으로 회전
-            Matrix matrix = new Matrix();
-            matrix.postRotate( checkDeviceOrientation( orientation ) );
-
-            bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
+            myView.imgsave( bitimg );
 
             Log.d( TAG,"bitmapCallback close" );
             reset();
         }
     };
-    private int checkDeviceOrientation(int orientation) {
-        Log.d( TAG,"방향확인" );
-        if(orientation>=315 || orientation<45) {
-            Log.d( TAG,"방향1" );
-            return 90;
-        }
-        else if(orientation>=45 && orientation<135) {
-            Log.d( TAG,"방향2" );
-            return 180;
-        }
-        else if(orientation>=135 && orientation<225) {
-            Log.d( TAG,"방향3" );
-            return 270;
-        }
-        else if(orientation>=225 && orientation<315) {
-            Log.d( TAG,"방향4" );
-            return 0;
-        } else { Log.d( TAG,"방향확인 실패" ); return 0; }
-    }
+
     public void takePicture( ) {
         camera.autoFocus(myAutoFocusCallback);
         camera.takePicture(shutterCallback, null, bitmapCallback);
@@ -153,17 +131,12 @@ public class CameraForOCR {
         public void onAutoFocus(boolean success, Camera camera) {/*nothing*/}
     };
 
-
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
-    }
-
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private void showCheckForEquationAlertdialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
         imgprocessor a = new imgprocessor();
-
-        alert.setTitle("다음의 식이 맞습니까?").setMessage(mtessOCR.requestOCR( bitimg )).setCancelable( false ).setPositiveButton( "확인",
+        BitmapToOCR b = new BitmapToOCR(a.imgfilter( bitimg ) , mtessOCR);
+        alert.setTitle("다음의 식이 맞습니까?").setMessage(b.excuteOCR()).setCancelable( false ).setPositiveButton( "확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

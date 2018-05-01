@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         orientEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
-                camera.setOrientation(orientation);
+                myView.setOrientation(orientation);
             }
         };
         if (orientEventListener.canDetectOrientation()) {

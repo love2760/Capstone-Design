@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.text.Layout;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class MyView extends View {
     Paint paint;
     float width, height;
     Context context;
+    int orientation;
 
     public MyView(Context context, float wid, float hei) {
         super(context);
@@ -166,8 +168,36 @@ public class MyView extends View {
 
     //선택된 사각형 이미지 저장
     public Bitmap imgsave(Bitmap bitimg) {
-        Bitmap bitmap = Bitmap.createBitmap( bitimg, (int)leftx,(int)topy, (int)(rightx-leftx),(int)(bottomy-topy) );
+        //이미지를 디바이스 방향으로 회전
+        Matrix matrix = new Matrix();
+        matrix.postRotate( checkDeviceOrientation( orientation ) );
+
+        Bitmap bitmap = Bitmap.createBitmap( bitimg, (int)leftx,(int)topy, (int)(rightx-leftx), (int)(bottomy-topy), matrix, true );
         return bitmap;
+    }
+
+    private int checkDeviceOrientation(int orientation) {
+        Log.d( TAG,"방향확인" );
+        if(orientation>=315 || orientation<45) {
+            Log.d( TAG,"방향1" );
+            return 90;
+        }
+        else if(orientation>=45 && orientation<135) {
+            Log.d( TAG,"방향2" );
+            return 180;
+        }
+        else if(orientation>=135 && orientation<225) {
+            Log.d( TAG,"방향3" );
+            return 270;
+        }
+        else if(orientation>=225 && orientation<315) {
+            Log.d( TAG,"방향4" );
+            return 0;
+        } else { Log.d( TAG,"방향확인 실패" ); return 0; }
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
     }
 
     /*
