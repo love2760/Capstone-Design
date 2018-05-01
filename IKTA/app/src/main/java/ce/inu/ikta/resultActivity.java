@@ -1,6 +1,7 @@
 package ce.inu.ikta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -113,7 +114,8 @@ public class resultActivity extends AppCompatActivity {
     Button.OnClickListener Save_Btn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent( ctx, SaveActivity.class );
+            ctx.startActivity( intent );
         }
     };
 

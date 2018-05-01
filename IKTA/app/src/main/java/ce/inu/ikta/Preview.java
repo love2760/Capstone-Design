@@ -205,4 +205,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
     }
 
+    /*
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+
+    }*/
+
 }

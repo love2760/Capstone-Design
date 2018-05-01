@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ce.inu.ikta.SaveActivity">
+    tools:context="ce.inu.ikta.SaveResultActivity">
 
-    <ListView
-        android:id="@+id/savelist"
+    <ExpandableListView
+        android:id="@+id/saveExpList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

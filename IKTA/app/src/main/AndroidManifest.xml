@@ -5,6 +5,7 @@
     <!-- 권한 부여 -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,7 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".resultActivity"/>
+        <activity android:name=".resultActivity" />
+        <activity android:name=".SaveActivity" />
+        <activity android:name=".SaveResultActivity"></activity>
     </application>
 
 </manifest>
