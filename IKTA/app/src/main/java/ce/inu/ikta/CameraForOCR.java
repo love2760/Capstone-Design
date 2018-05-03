@@ -140,16 +140,16 @@ public class CameraForOCR {
         Log.d(TAG,".sizeXY()");
         sizexy = new int[4];
 
-        float left = MyView.getMyView().leftx;
-        float right = MyView.getMyView().rightx;
-        float top = MyView.getMyView().topy;
-        float bottom = MyView.getMyView().bottomy;
+        float left = MyView.getMyView().leftX;
+        float right = MyView.getMyView().rightX;
+        float top = MyView.getMyView().topY;
+        float bottom = MyView.getMyView().bottomY;
 
         float boxX =  right - left;
         float boxY =  bottom - top;
 
-        float monitorX = MyView.getMyView().Lwidth;
-        float monitorY = MyView.getMyView().Lheight;
+        float monitorX = MyView.getMyView().linearWidth;
+        float monitorY = MyView.getMyView().linearHeight;
 
         float bitimgX = bitimg.getWidth();
         float bitimgY = bitimg.getHeight();
