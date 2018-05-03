@@ -19,11 +19,12 @@ public class SaveActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_save );
         listView = (ListView) findViewById( R.id.savelist );
+        /*
         //액션바 객체 가져옴
         ActionBar actionBar = getSupportActionBar();
         //액션바에 < 버튼 생성
         actionBar.setDisplayHomeAsUpEnabled( true );
-        actionBar.setHomeButtonEnabled( true );
+        actionBar.setHomeButtonEnabled( true );*/
         setListener();
     }
 

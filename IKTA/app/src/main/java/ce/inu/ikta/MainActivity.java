@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     Context ctx;
     ImageButton cameraShtBtn;
-    View goSaveList;
     OrientationEventListener orientEventListener;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
@@ -52,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
         requestPerm.setPermissions();
     }
 
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        linearLayout.removeView( linearLayout );
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
         surfaceView = (SurfaceView) this. findViewById( R.id.cameraView );
         size = new float[4];
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         size[2] = surfaceView.getWidth();
         size[3] = surfaceView.getHeight();
         myView = MyView.create( ctx, size );
+        linearLayout.removeAllViews();
         linearLayout.addView( myView, new RelativeLayout.LayoutParams
                 ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         );
@@ -124,14 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } );
-    }
-
-    //액션바 버튼 클릭 리스너1
-    public void onBtnClicked(View view) {
-        if(view.getId() == R.layout.support_simple_spinner_dropdown_item) {
-            Intent intent = new Intent( ctx, SaveActivity.class );
-            startActivity( intent );
-        }
     }
 
     //권한 확인
