@@ -63,14 +63,22 @@ public class imgprocessor {
     }
     public void imgfilter2() {
         Mat tmp = new Mat (bitimg.getWidth(), bitimg.getHeight(), CvType.CV_8UC1);
+        double tmp_width = tmp.width();
+        double tmp_height = tmp.height();
+        double ratio = tmp_height / tmp_width;
+
         Utils.bitmapToMat(bitimg, tmp);
         Imgproc.cvtColor(tmp,tmp,Imgproc.COLOR_RGB2GRAY);
+        //Imgproc.resize(tmp, tmp, new Size(ratio*300,300));
+
+
         Imgproc.GaussianBlur( tmp,tmp, new Size(3,3) , 1,1 );
         Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
         //Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
         Core.bitwise_not(tmp,tmp);
 
         drawcontours(tmp, contours);
+        //Imgproc.resize(tmp,tmp, new Size(tmp_width, tmp_height));
         Utils.matToBitmap(tmp, bitimg);
     }
 
