@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        linearLayout.removeAllViews();
+        linearLayout.removeView( linearLayout );
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
         surfaceView = (SurfaceView) this. findViewById( R.id.cameraView );
         size = new float[4];
