@@ -66,8 +66,8 @@ public class imgprocessor {
         Utils.bitmapToMat(bitimg, tmp);
         Imgproc.cvtColor(tmp,tmp,Imgproc.COLOR_RGB2GRAY);
         Imgproc.GaussianBlur( tmp,tmp, new Size(3,3) , 1,1 );
-//        Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
-        Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
+        //Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
+       Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
         Core.bitwise_not(tmp,tmp);
 
         drawcontours(tmp, contours);
@@ -88,24 +88,27 @@ public class imgprocessor {
 
         for (int i = 0; i< contours.size();i++)
         {
-            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
+             MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
             double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-
-            if (approxDistance > 1)
+            if(approxDistance > 1)
             {
-                Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-                MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-                Rect rect = Imgproc.boundingRect(points);
-                rects.add(rect);
+            Imgproc.approxPolyDP(contour2f, approxCurve,approxDistance, true);
+            MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+            rects.add(Imgproc.boundingRect(points));
             }
+
         }
 
         for (int i=0; i<contours.size();i++)
         {
             Imgproc.drawContours(img, contours, i, new Scalar(0,0,0), 1, 8, hierarchy, 0, new Point());
+           if(rects.get(i).width>10 && rects.get(i).height>10)
+           {
             Imgproc.rectangle(img, rects.get(i).tl(), rects.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
+            }
 
         }
 
     }
+
 }
