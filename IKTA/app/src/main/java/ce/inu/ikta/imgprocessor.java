@@ -6,9 +6,16 @@ import android.util.Log;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.android.Utils;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import static ce.inu.ikta.globalValue.bitimg;
@@ -28,6 +35,9 @@ public class imgprocessor {
     // native methods...
     private native Mat imgFiltering(long matAddrInput);
     private native void imgFiltering2(long matAddrInput);
+
+    private List<MatOfPoint> contours = new ArrayList<>();
+    private List<MatOfPoint2f> contours_poly = new ArrayList<>();
 
     // java methods...
     public Vector<Bitmap> imgfilter(Bitmap src)
@@ -57,10 +67,28 @@ public class imgprocessor {
         Imgproc.GaussianBlur( tmp,tmp, new Size(3,3) , 1,1 );
 //        Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
         Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
-
-
-
-
+        drawcontours(tmp, contours);
         Utils.matToBitmap(tmp, bitimg);
+    }
+
+    public void drawcontours(Mat img, List<MatOfPoint> contours)
+    {
+        Mat hierarchy = new Mat();
+        contours.clear();
+        List<Rect> rect = new ArrayList<>(contours.size());
+        Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+        for (int i = 0; i< contours.size();i++)
+        {
+            Imgproc.approxPolyDP((MatOfPoint2f)contours, (MatOfPoint2f)contours, 4 ,true);
+            rect.add(Imgproc.boundingRect(contours.get(i)));
+        }
+
+        for (int i=0; i<contours.size();i++)
+        {
+            Imgproc.drawContours(img, contours, i, new Scalar(0,0,0), 1, 8, hierarchy, 0, new Point());
+            Imgproc.rectangle(img, rect.get(i).tl(), rect.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
+
+        }
+
     }
 }
