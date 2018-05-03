@@ -207,7 +207,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             }
             //set max Preview Size
             parameters.setPreviewSize(size.width, size.height);
-            Log.d(TAG, "Suface Changed preview size" +size.width+"x" +size.height);
             // Important: Call startPreview() to start updating the preview surface.
             // Preview must be started before you can take a picture.
             mCamera.startPreview();
