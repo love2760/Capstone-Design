@@ -27,14 +27,15 @@ public class MainActivity extends AppCompatActivity {
     //변수 및 객체 선언
     private static final String TAG = "MainActivity";
     Context ctx;
-    OrientationEventListener orientEventListener;
     ImageButton cameraShtBtn;
+    OrientationEventListener orientEventListener;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
     CameraForOCR camera;
     MyView myView;
     LinearLayout linearLayout;
-    float width, height;
+    SurfaceView surfaceView;
+    float[] size;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,10 +49,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
-        width = linearLayout.getWidth();
-        height = linearLayout.getHeight();
-        Log.d(TAG,"width "+width+"  height "+height);
-        myView = new MyView( ctx, width, height );
+        surfaceView = (SurfaceView) this. findViewById( R.id.cameraView );
+        size = new float[4];
+        size[0] = linearLayout.getWidth();
+        size[1] = linearLayout.getHeight();
+        size[2] = surfaceView.getWidth();
+        size[3] = surfaceView.getHeight();
+        myView = MyView.create( ctx, size );
+        linearLayout.removeAllViews();
         linearLayout.addView( myView, new RelativeLayout.LayoutParams
                 ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         );
@@ -69,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
     //각종 리스너 선언
     void setListener() {
         // 회전 리스너
-        orientEventListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+        orientEventListener = new OrientationEventListener(ctx,SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
-                myView.setOrientation(orientation);
+                camera.setOrientation(orientation);
             }
         };
         if (orientEventListener.canDetectOrientation()) {
@@ -80,19 +85,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             finish();
         }
+
         //카메라 버튼 클릭 리스너
         cameraShtBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(v.getId() == R.id.cameraShutterBtn) {
-                    //v.setVisibility( View.VISIBLE );
-                    //myView.setVisibility( View.GONE );
                     cameraShtBtn.setEnabled( false ); //버튼이 눌렸을 때 버튼을 비활성화
                     camera.takePicture();
                 }
                 else {
-                    //v.setVisibility( View.GONE );
-                    //myView.setVisibility( View.VISIBLE );
                 }
             }
         } );
@@ -123,38 +125,5 @@ public class MainActivity extends AppCompatActivity {
         mediaScanIntent.setData( Uri.fromFile( file ) );
         sendBroadcast( mediaScanIntent );
     }
-
-
-
-    /*
-    private int[] r_size() {
-        final int R_int[] = new int[2];
-        ViewTreeObserver viewTreeObserver_i = relativeLayout.getViewTreeObserver();
-        viewTreeObserver_i.addOnGlobalLayoutListener( new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                relativeLayout.getViewTreeObserver().removeOnGlobalLayoutListener( this );
-                R_int[0] = relativeLayout.getMeasuredWidth();
-                R_int[1] = relativeLayout.getMeasuredHeight();
-                Log.d(TAG,"R_width "+R_int[0]+" R_height "+R_int[1]);
-            }
-        } );
-        return R_int;
-    }
-
-    private int[] s_size() {
-        final int S_int[] = new int[2];
-        ViewTreeObserver viewTreeObserver_s = surfaceView.getViewTreeObserver();
-        viewTreeObserver_s.addOnGlobalLayoutListener( new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                surfaceView.getViewTreeObserver().removeOnGlobalLayoutListener( this );
-                S_int[0] = surfaceView.getMeasuredWidth();
-                S_int[1] = surfaceView.getMeasuredHeight();
-                Log.d(TAG,"s_width "+S_int[0]+" s_height "+S_int[1]);
-            }
-        } );
-        return S_int;
-    }*/
 
 }

@@ -95,6 +95,23 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(width, height);
 
+        Camera.Parameters parameters = mCamera.getParameters();
+        List<Size> allPreviewSizes = parameters.getSupportedPreviewSizes();
+        List<Size> allPictureSizes = parameters.getSupportedPictureSizes();
+        Camera.Size Previewsize = allPreviewSizes.get(0); // get top size
+        Camera.Size Picturesize = allPictureSizes.get(0);
+        Camera.Size maxSize = allPictureSizes.get( 0 );
+
+        for (int i = 0; i < allPreviewSizes.size(); i++) {
+            for (int j = 0 ; j < allPictureSizes.size() ; j++) {
+                if(allPreviewSizes.get( i ).width == allPictureSizes.get( j ).width && allPreviewSizes.get( i ).height == allPictureSizes.get( j ).height) {
+                    if(maxSize.width <= allPreviewSizes.get( i ).width &&maxSize.height <= allPreviewSizes.get( i ).height ) {
+                        maxSize = allPreviewSizes.get(i);
+                    }
+                }
+            }
+        }
+
         if (mSupportedPreviewSizes != null) {
             mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
         }
@@ -151,9 +168,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
     }
 
-
+    //w,h 값을 받아서 가장 근접한 해상도와 비를 가지는 해상도를 list에서 선택해 가져옴
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
+
+        final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) w / h;
         if (sizes == null) return null;
 
@@ -186,28 +204,36 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     }
 
 
+
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if ( mCamera != null) {
             Camera.Parameters parameters = mCamera.getParameters();
-            List<Size> allSizes = parameters.getSupportedPreviewSizes();
-            Camera.Size size = allSizes.get(0); // get top size
-            for (int i = 0; i < allSizes.size(); i++) {
+            List<Size> allPreviewSizes = parameters.getSupportedPreviewSizes();
+            List<Size> allPictureSizes = parameters.getSupportedPictureSizes();
+            Camera.Size Previewsize = allPreviewSizes.get(0); // get top size
+            Camera.Size Picturesize = allPictureSizes.get(0);
+            Camera.Size maxSize = allPictureSizes.get( 0 );
+            /*for (int i = 0; i < allSizes.size(); i++) {
                 if (allSizes.get(i).width > size.width)
                     size = allSizes.get(i);
+            }*/
+            for (int i = 0; i < allPreviewSizes.size(); i++) {
+                for (int j = 0 ; j < allPictureSizes.size() ; j++) {
+                    if(allPreviewSizes.get( i ).width == allPictureSizes.get( j ).width && allPreviewSizes.get( i ).height == allPictureSizes.get( j ).height) {
+                        if(maxSize.width <= allPreviewSizes.get( i ).width &&maxSize.height <= allPreviewSizes.get( i ).height ) {
+                            maxSize = allPreviewSizes.get(i);
+                        }
+                    }
+                }
             }
             //set max Preview Size
-            parameters.setPreviewSize(size.width, size.height);
-
+            parameters.setPreviewSize(maxSize.width, maxSize.height);
+            parameters.setPictureSize( maxSize.width, maxSize.height );
             // Important: Call startPreview() to start updating the preview surface.
             // Preview must be started before you can take a picture.
             mCamera.startPreview();
         }
 
     }
-
-    /*
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-
-    }*/
 
 }

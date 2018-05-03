@@ -31,7 +31,10 @@ public class CameraForOCR {
     Activity mactivity;
     Camera camera;
     TessOCR mtessOCR;
-    MyView myView;
+    int orientation;
+    int sizexy[];
+
+
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     final String TAG = "CameraForOCR.java";
     public CameraForOCR(Context ctx, Activity mactivity) {
@@ -115,12 +118,70 @@ public class CameraForOCR {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;    //디코딩 방식을 ARGB_8888로 설정
             bitimg = BitmapFactory.decodeByteArray( data, 0, data.length, options );    //디코딩
 
-            myView.imgsave( bitimg );
+            //이미지를 디바이스 방향으로 회전
+            Matrix matrix = new Matrix();
+            matrix.postRotate( checkDeviceOrientation( orientation ) );
+
+            Log.d(TAG,"bitimg2 "+bitimg);
+
+            sizeXY();
+            bitimg = Bitmap.createBitmap( bitimg, sizexy[2], sizexy[3], sizexy[0], sizexy[1], matrix, true );
+            //bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
 
             Log.d( TAG,"bitmapCallback close" );
             reset();
         }
     };
+
+    private int[] sizeXY() {
+        sizexy = new int[4];
+
+        float left = MyView.getMyView().leftx;
+        float right = MyView.getMyView().rightx;
+        float top = MyView.getMyView().topy;
+        float bottom = MyView.getMyView().bottomy;
+
+        float boxX =  right - left;
+        float boxY =  bottom - top;
+
+        float monitorX = MyView.getMyView().Lwidth;
+        float monitorY = MyView.getMyView().Lheight;
+
+        float bitimgX = bitimg.getWidth();
+        float bitimgY = bitimg.getHeight();
+
+        sizexy[0] = (int)((boxX*bitimgX)/monitorX); //잘린 x 크기
+        sizexy[1] = (int)((boxY*bitimgY)/monitorY); //잘린 y 크기
+
+        sizexy[2] = (int)((left*bitimgX)/monitorX); //x 시작점
+        sizexy[3] = (int)((top*bitimgY)/monitorY);  //y 시작점
+
+        return sizexy;
+    }
+
+    private int checkDeviceOrientation(int orientation) {
+        Log.d( TAG,"방향확인" );
+        if(orientation>=315 || orientation<45) {
+            Log.d( TAG,"방향1" );
+            return 90;
+        }
+        else if(orientation>=45 && orientation<135) {
+            Log.d( TAG,"방향2" );
+            return 180;
+        }
+        else if(orientation>=135 && orientation<225) {
+            Log.d( TAG,"방향3" );
+            return 270;
+        }
+        else if(orientation>=225 && orientation<315) {
+            Log.d( TAG,"방향4" );
+            return 0;
+        } else { Log.d( TAG,"방향확인 실패" ); return 0; }
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
 
     public void takePicture( ) {
         camera.autoFocus(myAutoFocusCallback);
@@ -135,8 +196,10 @@ public class CameraForOCR {
     private void showCheckForEquationAlertdialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
         imgprocessor a = new imgprocessor();
-        BitmapToOCR b = new BitmapToOCR(a.imgfilter( bitimg ) , mtessOCR);
-        alert.setTitle("다음의 식이 맞습니까?").setMessage(b.excuteOCR()).setCancelable( false ).setPositiveButton( "확인",
+        Log.d( TAG,"aaaabbbb" );
+        a.imgfilter2( );
+        Log.d( TAG,"aaaa" );
+        alert.setTitle("다음의 식이 맞습니까?").setMessage(mtessOCR.requestOCR( bitimg )).setCancelable( false ).setPositiveButton( "확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

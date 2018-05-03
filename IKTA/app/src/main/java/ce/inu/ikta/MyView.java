@@ -1,5 +1,6 @@
 package ce.inu.ikta;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,11 +8,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.hardware.SensorManager;
 import android.text.Layout;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import static ce.inu.ikta.globalValue.bitimg;
+import static okhttp3.internal.Internal.instance;
 
 /**
  * Created by NyuNyu on 2018-04-16.
@@ -20,23 +26,34 @@ import android.widget.LinearLayout;
 public class MyView extends View {
     private static final String TAG = "MyView.java";
     float leftx, rightx, topy, bottomy;
-    static int dep = 50;
+    static int dep = 150;
 
-    MainActivity mainActivity;
-    Bitmap bitimg;
     Paint paint;
-    float width, height;
-    Context context;
-    int orientation;
+    float Lwidth, Lheight, Swidth, Sheight;
 
-    public MyView(Context context, float wid, float hei) {
+    static MyView myView = null;
+
+    public static MyView create(Context context, float[] size) {
+        if(myView == null) {
+            myView = new MyView(context,size);
+        }
+        return myView;
+    }
+
+    public static MyView getMyView() {
+        return myView;
+    }
+
+    private MyView(Context context, float[] size) {
         super(context);
-        width = wid;
-        height = hei;
-        leftx = width / 10;
-        rightx = width * 9 / 10;
-        topy = height*(7/2) / 10;
-        bottomy = height * (13/2) / 10;
+        Lwidth = size[0];
+        Lheight = size[1];
+        Swidth = size[2];
+        Sheight =size[3];
+        leftx = Lwidth / 10;
+        rightx = Lwidth * 9 / 10;
+        topy = Lheight*(9/2) / 10;
+        bottomy = Lheight * (11/2) / 10;
         setOnTouchListener(onTouchListener);
     }
 
@@ -57,7 +74,6 @@ public class MyView extends View {
     }
 
     //이벤트 처리, 현재의 그리기 모드에 따른 점의 위치 조정
-    float dx = 0, dy = 0;
     float oldx, oldy;
     boolean bleftx, btopy, brightx, bbottomy;
     boolean boo = false;
@@ -116,36 +132,36 @@ public class MyView extends View {
                 }
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (bleftx) { leftx = x;  rightx = width - x; }
-                    if (brightx) { rightx = x;    leftx = width - x; }
-                    if (btopy) { topy = y;    bottomy = height - y; }
-                    if (bbottomy) { bottomy = y;  topy = height - y; }
+                    if (bleftx) { leftx = x;  rightx = Lwidth - x; }
+                    if (brightx) { rightx = x;    leftx = Lwidth - x; }
+                    if (btopy) { topy = y;    bottomy = Lheight - y; }
+                    if (bbottomy) { bottomy = y;  topy = Lheight - y; }
 
                     //사각형의 각 선분이 중앙을 넘지 않도록 처리
-                    if (leftx >= width*4/10) {
-                        leftx = width*4/10;
+                    if (leftx >= Lwidth*4/10) {
+                        leftx = Lwidth*4/10;
                     }
 
-                    if (rightx <= width*6/10) {
-                        rightx = width*6/10;
+                    if (rightx <= Lwidth*6/10) {
+                        rightx = Lwidth*6/10;
                     }
 
-                    if (topy >= height*4/10) {
-                        topy = height*4/10;
+                    if (topy >= (Lheight*(9/2)) / 10) {
+                        topy = (Lheight*(9/2)) / 10;
                     }
 
-                    if (bottomy <= height*6/10) {
-                        bottomy = height*6/10;
+                    if (bottomy <= (Lheight*(11/2)) / 10) {
+                        bottomy = (Lheight*(11/2)) / 10;
                     }
 
                     //화면 밖으로 나가지 않게 처리
                     if (leftx <= 0) leftx = 0;
 
-                    if (rightx >= width) rightx = width;
+                    if (rightx >= Lwidth) rightx = Lwidth;
 
                     if (topy <= 0) topy = 0;
 
-                    if (bottomy >= height) bottomy = height;
+                    if (bottomy >= Lheight) bottomy = Lheight;
 
                     invalidate(); // 움직일 때 다시 그림
                     oldx=x;
@@ -165,46 +181,5 @@ public class MyView extends View {
             return false;
         }
     };
-
-    //선택된 사각형 이미지 저장
-    public Bitmap imgsave(Bitmap bitimg) {
-        //이미지를 디바이스 방향으로 회전
-        Matrix matrix = new Matrix();
-        matrix.postRotate( checkDeviceOrientation( orientation ) );
-
-        Bitmap bitmap = Bitmap.createBitmap( bitimg, (int)leftx,(int)topy, (int)(rightx-leftx), (int)(bottomy-topy), matrix, true );
-        return bitmap;
-    }
-
-    private int checkDeviceOrientation(int orientation) {
-        Log.d( TAG,"방향확인" );
-        if(orientation>=315 || orientation<45) {
-            Log.d( TAG,"방향1" );
-            return 90;
-        }
-        else if(orientation>=45 && orientation<135) {
-            Log.d( TAG,"방향2" );
-            return 180;
-        }
-        else if(orientation>=135 && orientation<225) {
-            Log.d( TAG,"방향3" );
-            return 270;
-        }
-        else if(orientation>=225 && orientation<315) {
-            Log.d( TAG,"방향4" );
-            return 0;
-        } else { Log.d( TAG,"방향확인 실패" ); return 0; }
-    }
-
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
-    }
-
-    /*
-    public View activity(Activity activity) {
-        return activity.findViewById( R.id.cameraView );
-    }*/
-
-
 
 }
