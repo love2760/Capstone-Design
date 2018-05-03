@@ -3,6 +3,7 @@ package ce.inu.ikta;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.android.Utils;
@@ -67,6 +68,8 @@ public class imgprocessor {
         Imgproc.GaussianBlur( tmp,tmp, new Size(3,3) , 1,1 );
 //        Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
         Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
+        Core.bitwise_not(tmp,tmp);
+
         drawcontours(tmp, contours);
         Utils.matToBitmap(tmp, bitimg);
     }
@@ -75,18 +78,32 @@ public class imgprocessor {
     {
         Mat hierarchy = new Mat();
         contours.clear();
-        List<Rect> rect = new ArrayList<>(contours.size());
+        List<Rect> rects = new ArrayList<>(contours.size());
         Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+        MatOfPoint2f approxCurve = new MatOfPoint2f();
+
+        Imgproc.cvtColor(img,img,Imgproc.COLOR_GRAY2RGB);
+
+
         for (int i = 0; i< contours.size();i++)
         {
-            Imgproc.approxPolyDP((MatOfPoint2f)contours, (MatOfPoint2f)contours, 4 ,true);
-            rect.add(Imgproc.boundingRect(contours.get(i)));
+            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
+            double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
+
+            if (approxDistance > 1)
+            {
+                Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
+                MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+                Rect rect = Imgproc.boundingRect(points);
+                rects.add(rect);
+            }
         }
 
         for (int i=0; i<contours.size();i++)
         {
             Imgproc.drawContours(img, contours, i, new Scalar(0,0,0), 1, 8, hierarchy, 0, new Point());
-            Imgproc.rectangle(img, rect.get(i).tl(), rect.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
+            Imgproc.rectangle(img, rects.get(i).tl(), rects.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
 
         }
 
