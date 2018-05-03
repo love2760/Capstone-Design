@@ -26,7 +26,7 @@ import static okhttp3.internal.Internal.instance;
 public class MyView extends View {
     private static final String TAG = "MyView.java";
     float leftx, rightx, topy, bottomy;
-    static int dep = 150;
+    static int dep = 70; // 150 했더니 터치 범위가 말도안되게 변해서 고침.
 
     Paint paint;
     float Lwidth, Lheight, Swidth, Sheight;
@@ -52,8 +52,8 @@ public class MyView extends View {
         Sheight =size[3];
         leftx = Lwidth / 10;
         rightx = Lwidth * 9 / 10;
-        topy = Lheight*(9/2) / 10;
-        bottomy = Lheight * (11/2) / 10;
+        topy = Lheight*4.5f / 10;
+        bottomy = Lheight * 5.5f/ 10;
         setOnTouchListener(onTouchListener);
     }
 
@@ -76,7 +76,6 @@ public class MyView extends View {
     //이벤트 처리, 현재의 그리기 모드에 따른 점의 위치 조정
     float oldx, oldy;
     boolean bleftx, btopy, brightx, bbottomy;
-    boolean boo = false;
 
     OnTouchListener onTouchListener = new OnTouchListener() {
         @Override
@@ -121,59 +120,34 @@ public class MyView extends View {
                         }
                     }
 
-
-                    //하나라도 선택시 boo값 변경
-                    if (bleftx || brightx || btopy || bbottomy) boo = false;
-
-
-                    Log.d(TAG,"들어오나1 "+ motionEvent.getAction()+" x값 "+oldx+" y값 "+oldy);
-
                     return true;
                 }
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (bleftx) { leftx = x;  rightx = Lwidth - x; }
-                    if (brightx) { rightx = x;    leftx = Lwidth - x; }
-                    if (btopy) { topy = y;    bottomy = Lheight - y; }
-                    if (bbottomy) { bottomy = y;  topy = Lheight - y; }
+                    // 사각형 움직임 처리
+                    if (bleftx) { leftx = x;  rightx = Lwidth - x; } // 왼쪽 변 선택시 이동 처리
+                    if (brightx) { rightx = x;    leftx = Lwidth - x; } // 우측 변 선택시 이동 처리
+                    if (btopy) { topy = y;    bottomy = Lheight - y; } // 위쪽 변 선택시 이동 처리
+                    if (bbottomy) { bottomy = y;  topy = Lheight - y; } // 아래쪽 변 선택시 이동 처리
 
-                    //사각형의 각 선분이 중앙을 넘지 않도록 처리
-                    if (leftx >= Lwidth*4/10) {
-                        leftx = Lwidth*4/10;
-                    }
-
-                    if (rightx <= Lwidth*6/10) {
-                        rightx = Lwidth*6/10;
-                    }
-
-                    if (topy >= (Lheight*(9/2)) / 10) {
-                        topy = (Lheight*(9/2)) / 10;
-                    }
-
-                    if (bottomy <= (Lheight*(11/2)) / 10) {
-                        bottomy = (Lheight*(11/2)) / 10;
-                    }
+                    //사각형의 최소크기 지정
+                    if (leftx >= Lwidth*4/10)       leftx = Lwidth*4/10; // 왼쪽 변 최소 크기
+                    if (rightx <= Lwidth*6/10)      rightx = Lwidth*6/10; // 우측 변 최소 크기
+                    if (topy >= Lheight*4.5 / 10)   topy = Lheight*4.5f / 10; // 위쪽 변 최소 크기
+                    if (bottomy <= Lheight*5.5/10)  bottomy = Lheight*5.5f / 10; // 아래쪽 변 최소 크기
 
                     //화면 밖으로 나가지 않게 처리
                     if (leftx <= 0) leftx = 0;
-
                     if (rightx >= Lwidth) rightx = Lwidth;
-
                     if (topy <= 0) topy = 0;
-
                     if (bottomy >= Lheight) bottomy = Lheight;
-
                     invalidate(); // 움직일 때 다시 그림
-                    oldx=x;
-                    oldy=y;
-                    Log.d(TAG,"들어오나2 "+ motionEvent.getAction()+"x값 "+oldx+" y값 "+oldy);
 
                     return true;
                 }
 
-                //action_up 이면 그리기 종료
                 if(motionEvent.getAction()==MotionEvent.ACTION_UP) {
-                    bleftx = brightx = btopy = bbottomy = boo = false;
+                    bleftx = brightx = btopy = bbottomy = false;
                     return true;
                 }
                 return false;
