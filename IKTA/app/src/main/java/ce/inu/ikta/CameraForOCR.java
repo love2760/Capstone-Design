@@ -45,6 +45,7 @@ public class CameraForOCR {
     }
 
     public void start() {
+        Log.d(TAG,".start()");
         //프리뷰 초기화
         if (preview == null) {
             preview = new Preview( ctx, (SurfaceView) mactivity.findViewById( R.id.cameraView) );
@@ -52,7 +53,6 @@ public class CameraForOCR {
                     ViewGroup.LayoutParams.MATCH_PARENT ) );  //프리뷰 크기 정함
             ((RelativeLayout) mactivity.findViewById( R.id.layout )).addView( preview );
             preview.setKeepScreenOn( true );    //화면을 켠 상태로 유지
-
         }
 
         //카메라 초기화
@@ -75,7 +75,7 @@ public class CameraForOCR {
                     if( tmp.get( i ).width*tmp.get( i ).height > Max.width*Max.height)
                         Max =tmp.get(i);
                 }
-                camera.getParameters().setPictureSize( Max.width,Max.height );
+                //camera.getParameters().setPictureSize( Max.width,Max.height );
                 camera.startPreview();  //프리뷰 시작
 
             } catch (RuntimeException ex) {
@@ -86,6 +86,7 @@ public class CameraForOCR {
         preview.setCamera( camera );    //프리뷰의 카메라 설정
     }
     public void pause() {
+        Log.d(TAG,".pause()");
         if (camera != null) {
             // Call stopPreview() to stop updating the preview surface
             camera.stopPreview();
@@ -98,6 +99,7 @@ public class CameraForOCR {
         preview = null;
     }
     public void reset() {
+        Log.d(TAG,".reset");
         start();
         showCheckForEquationAlertdialog();
     }
@@ -109,10 +111,11 @@ public class CameraForOCR {
     Camera.PictureCallback bitmapCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            //이미지의 너비와 높이 결정
+            Log.d(TAG,".bitmapCallback");
+           //이미지의 너비와 높이 결정
             int w= camera.getParameters().getPictureSize().width;
             int h = camera.getParameters().getPictureSize().height;
-
+            Log.d(TAG, "촬영시 카메라 크기 : "+w+"x"+h);
             //byte array를 bitmap으로 변환
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;    //디코딩 방식을 ARGB_8888로 설정
@@ -125,8 +128,8 @@ public class CameraForOCR {
             Log.d(TAG,"bitimg2 "+bitimg);
 
             sizeXY();
-            bitimg = Bitmap.createBitmap( bitimg, sizexy[2], sizexy[3], sizexy[0], sizexy[1], matrix, true );
-            //bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
+            //bitimg = Bitmap.createBitmap( bitimg, sizexy[2], sizexy[3], sizexy[0], sizexy[1], matrix, true );
+            bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, matrix, true );
 
             Log.d( TAG,"bitmapCallback close" );
             reset();
@@ -134,6 +137,7 @@ public class CameraForOCR {
     };
 
     private int[] sizeXY() {
+        Log.d(TAG,".sizeXY()");
         sizexy = new int[4];
 
         float left = MyView.getMyView().leftx;
@@ -184,6 +188,8 @@ public class CameraForOCR {
     }
 
     public void takePicture( ) {
+        Log.d(TAG,".takePicture()");
+        Log.d(TAG,camera.getParameters().getPictureSize().width+"x"+camera.getParameters().getPictureSize().height);
         camera.autoFocus(myAutoFocusCallback);
         camera.takePicture(shutterCallback, null, bitmapCallback);
     }
@@ -194,11 +200,10 @@ public class CameraForOCR {
 
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private void showCheckForEquationAlertdialog() {
+        Log.d(TAG,".showCheckForEquationAlertdialog()");
         AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
         imgprocessor a = new imgprocessor();
-        Log.d( TAG,"aaaabbbb" );
-        a.imgfilter2( );
-        Log.d( TAG,"aaaa" );
+        //a.imgfilter2( );
         alert.setTitle("다음의 식이 맞습니까?").setMessage(mtessOCR.requestOCR( bitimg )).setCancelable( false ).setPositiveButton( "확인",
                 new DialogInterface.OnClickListener() {
                     @Override

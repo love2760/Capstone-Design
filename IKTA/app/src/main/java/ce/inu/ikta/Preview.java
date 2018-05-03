@@ -23,6 +23,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     SurfaceView mSurfaceView;
     SurfaceHolder mHolder;
     Size mPreviewSize;
+    Size mPictureSize;
     List<Size> mSupportedPreviewSizes;
     List<Size> mSupportedPictureSizes;
     Camera mCamera;
@@ -44,13 +45,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             //카메라에 기존 값이 들어있으면 일단 프리뷰를 멈춤
             // Call stopPreview() to stop updating the preview surface.
             mCamera.stopPreview();
-
             // Important: Call release() to release the camera for use by other
             // applications. Applications should release the camera immediately
             // during onPause() and re-open() it during onResume()).
-
             mCamera.release();
-
             mCamera = null;
         }
 
@@ -61,17 +59,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             mSupportedPreviewSizes = localSizes;
             mSupportedPictureSizes = localPictureSizes;
             requestLayout();
-
-            // get Camera parameters
-            Camera.Parameters params = mCamera.getParameters();
-
-            List<String> focusModes = params.getSupportedFocusModes();
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                // set the focus mode
-                params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                // set Camera parameters
-                mCamera.setParameters(params);
-            }
 
             try {
                 mCamera.setPreviewDisplay(mHolder);
@@ -94,23 +81,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(width, height);
-
-        Camera.Parameters parameters = mCamera.getParameters();
-        List<Size> allPreviewSizes = parameters.getSupportedPreviewSizes();
-        List<Size> allPictureSizes = parameters.getSupportedPictureSizes();
-        Camera.Size Previewsize = allPreviewSizes.get(0); // get top size
-        Camera.Size Picturesize = allPictureSizes.get(0);
-        Camera.Size maxSize = allPictureSizes.get( 0 );
-
-        for (int i = 0; i < allPreviewSizes.size(); i++) {
-            for (int j = 0 ; j < allPictureSizes.size() ; j++) {
-                if(allPreviewSizes.get( i ).width == allPictureSizes.get( j ).width && allPreviewSizes.get( i ).height == allPictureSizes.get( j ).height) {
-                    if(maxSize.width <= allPreviewSizes.get( i ).width &&maxSize.height <= allPreviewSizes.get( i ).height ) {
-                        maxSize = allPreviewSizes.get(i);
-                    }
-                }
-            }
-        }
 
         if (mSupportedPreviewSizes != null) {
             mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
@@ -143,10 +113,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
                         width, (height + scaledChildHeight) / 2);
             }
         }
+
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-
         //Toast.makeText(getContext(), "surfaceCreated", Toast.LENGTH_LONG).show();
         Log.d( "@@@", "surfaceCreated" );
 
@@ -170,7 +140,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
     //w,h 값을 받아서 가장 근접한 해상도와 비를 가지는 해상도를 list에서 선택해 가져옴
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
-
         final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) w / h;
         if (sizes == null) return null;
@@ -200,7 +169,29 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
                 }
             }
         }
+        setOptimalPictureSize(mCamera.getParameters());
         return optimalSize;
+    }
+
+    private void setOptimalPictureSize(Camera.Parameters parameters) {
+        Size currentPreviewSize = parameters.getPreviewSize();
+        List<Size>  allPictureSize = parameters.getSupportedPictureSizes();
+        float previewAspectRatio = (float)currentPreviewSize.width / (float)currentPreviewSize.height;
+        Size OptimalPictureSize = null;
+        for(int i = 0 ; i < allPictureSize.size() ; i++) {
+            float tmpPictureAspectRatio = (float)allPictureSize.get(i).width / (float)allPictureSize.get(i).height;
+            if( tmpPictureAspectRatio == previewAspectRatio) {
+                if(OptimalPictureSize == null) OptimalPictureSize = allPictureSize.get(i);
+                else {
+                    if(OptimalPictureSize.width*OptimalPictureSize.height
+                            < allPictureSize.get(i).width*allPictureSize.get(i).height)
+                        OptimalPictureSize = allPictureSize.get(i);
+                }
+            }
+        }
+        parameters.setPictureSize(OptimalPictureSize.width,OptimalPictureSize.height);
+        mPictureSize = OptimalPictureSize;
+        mCamera.setParameters(parameters);
     }
 
 
@@ -208,27 +199,15 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if ( mCamera != null) {
             Camera.Parameters parameters = mCamera.getParameters();
-            List<Size> allPreviewSizes = parameters.getSupportedPreviewSizes();
-            List<Size> allPictureSizes = parameters.getSupportedPictureSizes();
-            Camera.Size Previewsize = allPreviewSizes.get(0); // get top size
-            Camera.Size Picturesize = allPictureSizes.get(0);
-            Camera.Size maxSize = allPictureSizes.get( 0 );
-            /*for (int i = 0; i < allSizes.size(); i++) {
+            List<Size> allSizes = parameters.getSupportedPreviewSizes();
+            Camera.Size size = allSizes.get(0); // get top size
+            for (int i = 0; i < allSizes.size(); i++) {
                 if (allSizes.get(i).width > size.width)
                     size = allSizes.get(i);
-            }*/
-            for (int i = 0; i < allPreviewSizes.size(); i++) {
-                for (int j = 0 ; j < allPictureSizes.size() ; j++) {
-                    if(allPreviewSizes.get( i ).width == allPictureSizes.get( j ).width && allPreviewSizes.get( i ).height == allPictureSizes.get( j ).height) {
-                        if(maxSize.width <= allPreviewSizes.get( i ).width &&maxSize.height <= allPreviewSizes.get( i ).height ) {
-                            maxSize = allPreviewSizes.get(i);
-                        }
-                    }
-                }
             }
             //set max Preview Size
-            parameters.setPreviewSize(maxSize.width, maxSize.height);
-            parameters.setPictureSize( maxSize.width, maxSize.height );
+            parameters.setPreviewSize(size.width, size.height);
+            Log.d(TAG, "Suface Changed preview size" +size.width+"x" +size.height);
             // Important: Call startPreview() to start updating the preview surface.
             // Preview must be started before you can take a picture.
             mCamera.startPreview();
