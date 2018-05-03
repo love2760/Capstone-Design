@@ -173,6 +173,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         return optimalSize;
     }
 
+    //프리뷰와 사진의 비 일치
     private void setOptimalPictureSize(Camera.Parameters parameters) {
         Size currentPreviewSize = parameters.getPreviewSize();
         List<Size>  allPictureSize = parameters.getSupportedPictureSizes();

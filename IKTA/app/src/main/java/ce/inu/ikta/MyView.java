@@ -39,10 +39,10 @@ public class MyView extends View {
         linearHeight = size[1];
         SurfaceWidth = size[2];
         SurfaceHeight =size[3];
-        leftX = linearWidth / 10;
-        rightX = linearWidth * 9 / 10;
-        topY = linearHeight*4.5f / 10;
-        bottomY = linearHeight * 5.5f/ 10;
+        leftX = linearWidth *0.1f;
+        rightX = linearWidth * 0.9f;
+        topY = linearHeight*0.45f;
+        bottomY = linearHeight * 0.55f;
         setOnTouchListener(onTouchListener);
     }
 
@@ -112,10 +112,10 @@ public class MyView extends View {
                     if (boolBottomY) { bottomY = y;  topY = linearHeight - y; } // 아래쪽 변 선택시 이동 처리
 
                     //사각형의 최소크기 지정
-                    if (leftX >= linearWidth*4/10)       leftX = linearWidth*4/10; // 왼쪽 변 최소 크기
-                    if (rightX <= linearWidth*6/10)      rightX = linearWidth*6/10; // 우측 변 최소 크기
-                    if (topY >= linearHeight*4.5 / 10)   topY = linearHeight*4.5f / 10; // 위쪽 변 최소 크기
-                    if (bottomY <= linearHeight*5.5/10)  bottomY = linearHeight*5.5f / 10; // 아래쪽 변 최소 크기
+                    if (leftX >= linearWidth*0.4f)       leftX = linearWidth*0.4f; // 왼쪽 변 최소 크기
+                    if (rightX <= linearWidth*0.6f)      rightX = linearWidth*0.6f; // 우측 변 최소 크기
+                    if (topY >= linearHeight*0.45f)   topY = linearHeight*0.45f; // 위쪽 변 최소 크기
+                    if (bottomY <= linearHeight*0.55f)  bottomY = linearHeight*0.55f; // 아래쪽 변 최소 크기
 
                     //화면 밖으로 나가지 않게 처리
                     if (leftX <= 0) leftX = 0;

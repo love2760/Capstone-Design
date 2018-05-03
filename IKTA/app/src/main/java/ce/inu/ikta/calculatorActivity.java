@@ -4,12 +4,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SaveResultActivity extends AppCompatActivity {
+public class calculatorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_save_result );
+        setContentView( R.layout.activity_calculator );
 
         //액션바 객체 가져옴
         ActionBar actionBar = getSupportActionBar();

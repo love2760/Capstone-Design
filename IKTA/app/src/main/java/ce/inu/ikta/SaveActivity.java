@@ -2,6 +2,7 @@ package ce.inu.ikta;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,11 @@ public class SaveActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_save );
         listView = (ListView) findViewById( R.id.savelist );
+        //액션바 객체 가져옴
+        ActionBar actionBar = getSupportActionBar();
+        //액션바에 < 버튼 생성
+        actionBar.setDisplayHomeAsUpEnabled( true );
+        actionBar.setHomeButtonEnabled( true );
         setListener();
     }
 

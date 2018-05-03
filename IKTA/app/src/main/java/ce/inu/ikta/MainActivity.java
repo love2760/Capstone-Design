@@ -6,9 +6,14 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     Context ctx;
     ImageButton cameraShtBtn;
+    View goSaveList;
     OrientationEventListener orientEventListener;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
+        linearLayout.removeAllViews();
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
         surfaceView = (SurfaceView) this. findViewById( R.id.cameraView );
         size = new float[4];
@@ -56,10 +63,29 @@ public class MainActivity extends AppCompatActivity {
         size[2] = surfaceView.getWidth();
         size[3] = surfaceView.getHeight();
         myView = MyView.create( ctx, size );
-        linearLayout.removeAllViews();
         linearLayout.addView( myView, new RelativeLayout.LayoutParams
                 ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         );
+    }
+
+    //메뉴 버튼 그림
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate( R.menu.menu_actionbar,menu );
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if(menuItem.getItemId() == R.id.GoSaveList) {
+            Intent intent = new Intent( ctx, SaveActivity.class );
+            startActivity( intent );
+        }
+        else if(menuItem.getItemId() == R.id.GoCalculator) {
+            Intent intent = new Intent( ctx, calculatorActivity.class );
+            startActivity( intent );
+        }
+        return super.onOptionsItemSelected( menuItem );
     }
 
     //각종 value 설정
@@ -98,6 +124,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } );
+    }
+
+    //액션바 버튼 클릭 리스너1
+    public void onBtnClicked(View view) {
+        if(view.getId() == R.layout.support_simple_spinner_dropdown_item) {
+            Intent intent = new Intent( ctx, SaveActivity.class );
+            startActivity( intent );
+        }
     }
 
     //권한 확인
