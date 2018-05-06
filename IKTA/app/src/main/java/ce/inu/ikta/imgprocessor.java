@@ -73,8 +73,8 @@ public class imgprocessor {
 
 
         Imgproc.GaussianBlur( tmp,tmp, new Size(3,3) , 1,1 );
-        Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
-        //Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
+        //Imgproc.threshold( tmp,tmp,0,255,Imgproc.THRESH_BINARY+ Imgproc.THRESH_OTSU);
+        Imgproc.adaptiveThreshold( tmp,tmp,255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C , Imgproc.THRESH_BINARY, 75, 10);
         Core.bitwise_not(tmp,tmp);
 
         drawcontours(tmp, contours);
@@ -112,7 +112,7 @@ public class imgprocessor {
             //Imgproc.drawContours(img, contours, i, new Scalar(0,0,0), 1, 8, hierarchy, 0, new Point());
            if(rects.get(i).width>10 && rects.get(i).height>10)
            {
-            Imgproc.rectangle(img, rects.get(i).tl(), rects.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
+            //Imgproc.rectangle(img, rects.get(i).tl(), rects.get(i).br(), new Scalar(0,255,0), 1, 8 ,0);
             }
 
         }

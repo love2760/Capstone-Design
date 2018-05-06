@@ -30,6 +30,7 @@ public class CameraForOCR {
     Camera camera;
     TessOCR mtessOCR;
     int orientation;
+    private static String OCRResultStirng;
 
 
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -187,8 +188,22 @@ public class CameraForOCR {
     private void showCheckForEquationAlertdialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
         imgprocessor a = new imgprocessor();
-        a.imgfilter2( );
-        alert.setTitle("다음의 식이 맞습니까?").setMessage(mtessOCR.requestOCR(bitimg)).setCancelable(false).setPositiveButton("확인",
+        //a.imgfilter2( );
+        OCRResultStirng = "Failed";
+        Thread CloudVisionThread = new Thread() {
+            public void run() {
+                CloudVisionAPI cloudVisionAPI = CloudVisionAPI.Initializer();
+                OCRResultStirng = cloudVisionAPI.request(bitimg);
+            }
+        };
+        CloudVisionThread.start();
+        try {
+            CloudVisionThread.join();
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
