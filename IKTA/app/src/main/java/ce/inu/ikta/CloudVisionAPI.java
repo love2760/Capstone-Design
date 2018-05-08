@@ -16,7 +16,6 @@ import android.graphics.Bitmap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by 김광현 on 2018-05-06.

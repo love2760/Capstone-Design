@@ -6,6 +6,8 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
@@ -153,5 +155,7 @@ public class MainActivity extends AppCompatActivity {
         mediaScanIntent.setData( Uri.fromFile( file ) );
         sendBroadcast( mediaScanIntent );
     }
+
+
 
 }

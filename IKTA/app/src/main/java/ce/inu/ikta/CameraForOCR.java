@@ -1,6 +1,7 @@
 package ce.inu.ikta;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,14 +9,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.AsyncTask;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import static ce.inu.ikta.globalValue.bitimg;
 
@@ -185,41 +191,50 @@ public class CameraForOCR {
     };
 
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
+    private ProgressDialog progDialog;
     private void showCheckForEquationAlertdialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
-        imgprocessor a = new imgprocessor();
-        //a.imgfilter2( );
+        progDialog = new ProgressDialog(ctx);
+        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDialog.setMessage("사진을 구름에 담아 보내는 중...");
+        progDialog.setCancelable(false);
+        progDialog.setCanceledOnTouchOutside(false);
+        progDialog.show();
         OCRResultStirng = "Failed";
         Thread CloudVisionThread = new Thread() {
             public void run() {
                 CloudVisionAPI cloudVisionAPI = CloudVisionAPI.Initializer();
                 OCRResultStirng = cloudVisionAPI.request(bitimg);
+                handler.sendEmptyMessage(0);
             }
         };
         CloudVisionThread.start();
-        try {
-            CloudVisionThread.join();
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(ctx, resultActivity.class);
-                        i.putExtra( "ocrString",OCRResultStirng );
-                        ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
-                        ctx.startActivity(i);
-                    }
-                }).setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
-                        return;
-                    }
-                });
-        alert.show();
     }
+    private android.os.Handler handler = new android.os.Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progDialog.dismiss();
+            // 식이 정상적인지 확인하는 dialog
+            AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
+            alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(ctx, resultActivity.class);
+                            i.putExtra("ocrString", OCRResultStirng);
+                            ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
+                            ctx.startActivity(i);
+                        }
+                    }).setNegativeButton("취소",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
+                            return;
+                        }
+                    });
+            alert.show();
+            super.handleMessage(msg);
+        }
+    };
 
 }
