@@ -19,19 +19,22 @@ import static ce.inu.ikta.globalValue.bitimg;
 public class resultActivity extends AppCompatActivity {
     Context ctx;
     ImageView imgView;
-    MyView myView;
     String TAG = "resultActivity";
     ExpandableListView listView;
     private ArrayList<String> grplist = new ArrayList<String>(); //상위 리스트
     private HashMap<String, ArrayList<String>> child = new HashMap<String, ArrayList<String>>(  ); //하위 리스트
-    //wolfData에 넣은 string 가져옴
-    private wolfData wd = new wolfData("여기는 식을 받아올 자리", "여기는 답을 받아올 자리", null, "여기는 풀이를 받아올 자리");
+    String data;
+    ce.inu.ikta.wolframalpha wolframalpha;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
+        Intent intent = getIntent();
+        data = intent.getStringExtra( "ocrString" );
+         wolframalpha = new wolframalpha();
 
         setAdaptering();
 
@@ -49,6 +52,8 @@ public class resultActivity extends AppCompatActivity {
     //리스트뷰 구성
     private void setListData() {
 
+        wolfData wolfdata = wolframalpha.Wolfoutput( data );
+
         Log.d(TAG, "data 넣기");
         grplist.add("식");
         grplist.add("답");
@@ -56,13 +61,13 @@ public class resultActivity extends AppCompatActivity {
         grplist.add("풀이");
 
         ArrayList<String> input = new ArrayList<String>(  );
-        input.add(wd.input);
+        input.add(wolfdata.input);
         ArrayList<String> answer = new ArrayList<String>(  );
-        answer.add(wd.answer);
+        answer.add(wolfdata.answer);
         ArrayList<String> graph = new ArrayList<String>(  );
-        graph.add(wd.graph);
+        graph.add(wolfdata.graph);
         ArrayList<String> solution = new ArrayList<String>(  );
-        solution.add(wd.solution);
+        solution.add(wolfdata.solution);
 
         child.put(grplist.get(0), input);
         Log.d(TAG,"식 ArrayList에 무엇이 들었을까요"+input);
@@ -74,7 +79,7 @@ public class resultActivity extends AppCompatActivity {
     private void setAdaptering() {
         listView = (ExpandableListView) this.findViewById( R.id.listview ) ;    //리스트뷰 초기화
         setListData();  //expandableListview에 들어갈 data 생성
-        listView.setAdapter( new Adapter( this, grplist, child ) );    //adapter 적용
+        listView.setAdapter( new resultAdapter( this, grplist, child ) );    //adapter 적용
 
         //시작시 확장된 상태
         int groupCount = grplist.size();
@@ -82,6 +87,7 @@ public class resultActivity extends AppCompatActivity {
             listView.expandGroup( i );
         }
 
+        /*
         //1,2번째 확장 상태로 고정
         listView.setOnGroupCollapseListener( new ExpandableListView.OnGroupCollapseListener() {
             @Override
@@ -89,7 +95,7 @@ public class resultActivity extends AppCompatActivity {
                 listView.expandGroup(0);
                 listView.expandGroup(1);
             }
-        } );
+        } );*/
 
         //기본 화살표 아이콘 삭제
         listView.setGroupIndicator( null );

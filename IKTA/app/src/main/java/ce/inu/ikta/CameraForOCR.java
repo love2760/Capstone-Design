@@ -202,12 +202,12 @@ public class CameraForOCR {
         }catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(ctx, resultActivity.class);
+                        i.putExtra( "ocrString",OCRResultStirng );
                         ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
                         ctx.startActivity(i);
                     }

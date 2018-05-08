@@ -1,10 +1,14 @@
 package ce.inu.ikta;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,13 +18,13 @@ import java.util.HashMap;
  * Created by NyuNyu on 2018-04-09.
  */
 
-public class Adapter extends BaseExpandableListAdapter {
+public class resultAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private ArrayList<String> list;
     private HashMap<String,ArrayList<String>> child;
 
-    public Adapter(Context context, ArrayList<String> list, HashMap<String, ArrayList<String>> child) {
+    public resultAdapter(Context context, ArrayList<String> list, HashMap<String, ArrayList<String>> child) {
         super();
         this.context=context;
         this.list=list;     //resultActivity에서 만들었던 배열의 생성자
@@ -86,13 +90,24 @@ public class Adapter extends BaseExpandableListAdapter {
         if (view == null) {
             //하위 그룹 뷰의 xml 생성
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            view = inflater.inflate( R.layout.result_childtxt, null );
+
+            /*
+            if (groupPosition == 2) {
+                view = inflater.inflate( R.layout.result_childimg, null );
+
+                //String를 Bitmap으로 변환
+                byte[] decodedByteArray = Base64.decode(childlist, Base64.NO_WRAP);
+                Bitmap bitmap = BitmapFactory.decodeByteArray( decodedByteArray, 0, decodedByteArray.length );
+
+                ImageView imageChild = (ImageView) view.findViewById( R.id.childimg );
+                imageChild.setImageBitmap( bitmap );
+            }*/
+            //else {
+                view = inflater.inflate( R.layout.result_childtxt, null );
+                TextView textChild = (TextView) view.findViewById( R.id.childtxt );
+                textChild.setText( childlist );
+           //}
         }
-
-
-
-        TextView textChild = (TextView) view.findViewById( R.id.childtxt );
-        textChild.setText( childlist );
 
         return view;
     }

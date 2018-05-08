@@ -15,7 +15,6 @@ public class wolframalpha {
     private static String appid = "E5AKEG-Q8EA9VLPE2";
     final String TAG = "wolfram";
     wolfData output;
-
     public wolfData requestWolf(String input) {
         WAEngine engine = new WAEngine();
         engine.setAppID( appid );
@@ -47,7 +46,7 @@ public class wolframalpha {
                             }
                             System.out.println( "" );
                         }
-                        if (podtitle.contains( "Result" ) == true) {
+                        if (podtitle.contains( "Solution" ) == true || podtitle.contains( "Result" ) == true) {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {
                                     if (element instanceof WAPlainText) {
@@ -66,7 +65,9 @@ public class wolframalpha {
         } catch (WAException e) {
             e.printStackTrace();
         }
-        output = new wolfData( sinput, answer, "empty", "empty" );
+
+
+        output = new wolfData( sinput, answer, null, "empty" );
         return output;
     }
 

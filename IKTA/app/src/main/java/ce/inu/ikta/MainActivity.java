@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Context ctx;
     ImageButton cameraShtBtn;
     OrientationEventListener orientEventListener;
+    public DataBasesOpen dataBasesOpen;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
     CameraForOCR camera;
@@ -50,9 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setValue();
         setListener();
         requestPerm.setPermissions();
+        dataBasesOpen.DB();
     }
-
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         cameraShtBtn= (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         requestPerm = new RequestPerm( this,this );
         camera = new CameraForOCR(ctx,mActivity);
+        dataBasesOpen = new DataBasesOpen( MainActivity.this );
     }
     //각종 리스너 선언
     void setListener() {
