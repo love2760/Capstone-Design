@@ -1,34 +1,27 @@
 package ce.inu.ikta;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.io.File;
+import java.net.URI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     SurfaceView surfaceView;
     float[] size;
+    final int REQ_CODE_SELECT_IMAGE = 100;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         requestPerm.setPermissions();
         dataBasesOpen.DB();
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         linearLayout = (LinearLayout) this.findViewById(R.id.cameraTopView);
@@ -84,11 +79,26 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent( ctx, SaveActivity.class );
             startActivity( intent );
         }
-        else if(menuItem.getItemId() == R.id.GoCalculator) {
-            Intent intent = new Intent( ctx, calculatorActivity.class );
-            startActivity( intent );
+        else if(menuItem.getItemId() == R.id.GoAlbum) {
+            Intent intent = new Intent( Intent.ACTION_PICK);
+            intent.setType( MediaStore.Images.Media.CONTENT_TYPE );
+            intent.setData( MediaStore.Images.Media.EXTERNAL_CONTENT_URI );
+            startActivityForResult( intent, REQ_CODE_SELECT_IMAGE );
         }
         return super.onOptionsItemSelected( menuItem );
+    }
+
+    @Override   //갤러리 리스트에서 사진 데이터 가져오기
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQ_CODE_SELECT_IMAGE) {
+            if(resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getData();
+                Intent intent = new Intent( ctx, AlbumActivity.class );
+                intent.putExtra( "uri", uri );
+                Log.d(TAG,"여기는 메인의 uri "+uri);
+                ctx.startActivity( intent );
+            }
+        }
     }
 
     //각종 value 설정

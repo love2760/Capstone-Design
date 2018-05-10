@@ -28,24 +28,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".resultActivity"/>
-        <activity android:name=".SaveActivity" >
+        <activity android:name=".resultActivity" />
+        <activity android:name=".SaveActivity">
+
             <!--
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>-->
+                android:value=".MainActivity"/>
+            -->
         </activity>
-        <activity android:name=".SaveResultActivity" >
+        <activity android:name=".SaveResultActivity">
+
             <!--
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SaveActivity"/>-->
+                android:value=".SaveActivity"/>
+            -->
         </activity>
-        <activity android:name=".calculatorActivity">
-            <!--<meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>-->
-        </activity>
+        <activity android:name=".AlbumActivity"></activity>
     </application>
 
 </manifest>

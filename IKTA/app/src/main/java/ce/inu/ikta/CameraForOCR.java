@@ -119,6 +119,7 @@ public class CameraForOCR {
             //byte array를 bitmap으로 변환
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;    //디코딩 방식을 ARGB_8888로 설정
+            options.inSampleSize = 4;
             bitimg = BitmapFactory.decodeByteArray(data, 0, data.length, options);    //디코딩
 
             //이미지를 디바이스 방향으로 회전
@@ -193,48 +194,54 @@ public class CameraForOCR {
     //인식한 결과가 맞는지 확인하기 위해 dialog 창을 띄움
     private ProgressDialog progDialog;
     private void showCheckForEquationAlertdialog() {
-        progDialog = new ProgressDialog(ctx);
-        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progDialog.setMessage("사진을 구름에 담아 보내는 중...");
-        progDialog.setCancelable(false);
-        progDialog.setCanceledOnTouchOutside(false);
-        progDialog.show();
-        OCRResultStirng = "Failed";
-        Thread CloudVisionThread = new Thread() {
-            public void run() {
+        AsyncTask progTask = new AsyncTask() {
+            @Override
+            protected void onPostExecute(Object o) {
+                progDialog.dismiss();
+                // 식이 정상적인지 확인하는 dialog
+                AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
+                alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent(ctx, resultActivity.class);
+                                i.putExtra("ocrString", OCRResultStirng);
+                                ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
+                                ctx.startActivity(i);
+                            }
+                        }).setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
+                                return;
+                            }
+                        });
+                alert.show();
+                super.onPostExecute( o );
+            }
+
+            @Override
+            protected void onPreExecute() {
+                progDialog = new ProgressDialog(ctx);
+                progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDialog.setMessage("사진을 구름에 담아 보내는 중...");
+                progDialog.setCancelable(false);
+                progDialog.setCanceledOnTouchOutside(false);
+                progDialog.show();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                OCRResultStirng = "Failed";
                 CloudVisionAPI cloudVisionAPI = CloudVisionAPI.Initializer();
                 OCRResultStirng = cloudVisionAPI.request(bitimg);
-                handler.sendEmptyMessage(0);
+                return null;
             }
         };
-        CloudVisionThread.start();
+        progTask.execute(  );
+
     }
-    private android.os.Handler handler = new android.os.Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progDialog.dismiss();
-            // 식이 정상적인지 확인하는 dialog
-            AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
-            alert.setTitle("다음의 식이 맞습니까?").setMessage(OCRResultStirng).setCancelable(false).setPositiveButton("확인",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent i = new Intent(ctx, resultActivity.class);
-                            i.putExtra("ocrString", OCRResultStirng);
-                            ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
-                            ctx.startActivity(i);
-                        }
-                    }).setNegativeButton("취소",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((ImageButton) mactivity.findViewById(R.id.cameraShutterBtn)).setEnabled(true);
-                            return;
-                        }
-                    });
-            alert.show();
-            super.handleMessage(msg);
-        }
-    };
 
 }
