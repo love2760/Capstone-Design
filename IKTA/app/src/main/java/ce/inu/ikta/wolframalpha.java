@@ -5,6 +5,7 @@ import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAPlainText;
 import com.wolfram.alpha.WAPod;
+import com.wolfram.alpha.WAPodState;
 import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
 import com.wolfram.alpha.WASubpod;
@@ -23,6 +24,7 @@ public class wolframalpha {
         query.setInput( input );
         String sinput = "empty";
         String answer = "empty";
+        String solution = "empty";
         Log.d( TAG, "시작" );
 
         try {
@@ -46,17 +48,23 @@ public class wolframalpha {
                             }
                             System.out.println( "" );
                         }
-                        if (podtitle.contains( "Solution" ) == true || podtitle.contains( "Result" ) == true) {
+                        else if (podtitle.contains( "Solution" ) == true || podtitle.contains( "Result" ) == true || podtitle.contains( "solution" ) == true) {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {
                                     if (element instanceof WAPlainText) {
-                                        answer = ((WAPlainText) element).getText();
+                                        if (answer != "empty") {
+                                            answer = answer + '\n' + ((WAPlainText) element).getText();
+                                        }
+                                        else
+                                            answer =((WAPlainText) element).getText();
                                     }
                                 }
                             }
                             System.out.println( "" );
-                        } else
+                        }
+                            else
                             System.out.println( "" );
+                        answer = answer.replace( "sqrt","√" );
                     }
                 }
             }

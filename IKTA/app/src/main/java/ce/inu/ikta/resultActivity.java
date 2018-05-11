@@ -33,7 +33,8 @@ public class resultActivity extends AppCompatActivity {
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
         Intent intent = getIntent();
-        data = intent.getStringExtra( "ocrString" );
+        //data = intent.getStringExtra( "ocrString" );
+        data = "logx+10=0";
          wolframalpha = new wolframalpha();
 
         setAdaptering();
