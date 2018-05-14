@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -35,18 +36,20 @@ public class CameraForOCR {
     Activity mactivity;
     Camera camera;
     TessOCR mtessOCR;
-    int orientation;
+    int orientation, i;
     private static String OCRResultStirng;
 
 
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
     final String TAG = "CameraForOCR.java";
 
-    public CameraForOCR(Context ctx, Activity mactivity) {
+    public CameraForOCR(Context ctx, Activity mactivity, int i) {
         this.preview = null;
         this.ctx = ctx;
         this.mactivity = mactivity;
         mtessOCR = new TessOCR(ctx);
+        if(i==1) this.i = 1;
+        else if(i==0) this.i = 0;
     }
 
     public void start() {
@@ -122,29 +125,50 @@ public class CameraForOCR {
             options.inSampleSize = 4;
             bitimg = BitmapFactory.decodeByteArray(data, 0, data.length, options);    //디코딩
 
-            //이미지를 디바이스 방향으로 회전
-            Matrix matrix = new Matrix();
-            matrix.postRotate(checkDeviceOrientation(orientation));
-
-            //bitimg = Bitmap.createBitmap( bitimg, 0, 0, w, h, null, true );
-            int[] imgData = sizeXY();
-            bitimg = Bitmap.createBitmap(bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true);
-            bitimg = Bitmap.createBitmap(bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), matrix, true);
+            cutImg();
 
             Log.d(TAG, "bitmapCallback close");
             reset();
         }
     };
 
+    public void cutImg() {
+
+        //이미지를 디바이스 방향으로 회전
+        Matrix matrix = new Matrix();
+        if(i == 1) {
+            matrix.postRotate( checkDeviceOrientation( orientation ) );
+        }
+        else matrix = null;
+
+        int[] imgData = sizeXY();
+        bitimg = Bitmap.createBitmap(bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true);
+        bitimg = Bitmap.createBitmap(bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), matrix, true);
+
+    }
+
     private int[] sizeXY() {
+        Log.d(TAG,"i값은? "+i);
 
-        float surfaceWidth = MyView.getMyView().SurfaceWidth;
-        float surfaceHeight = MyView.getMyView().SurfaceHeight;
+        float surfaceWidth = 0, surfaceHeight = 0,
+                leftXratio = 0, rightXratio = 0, topYratio = 0, bottomYratio = 0;
 
-        float leftXratio = MyView.getMyView().topY / surfaceHeight;
-        float rightXratio = MyView.getMyView().bottomY / surfaceHeight;
-        float topYratio = MyView.getMyView().leftX / surfaceWidth;
-        float bottomYratio = MyView.getMyView().rightX / surfaceWidth;
+        if(i == 1) {
+            surfaceWidth = MyView.getMyView().SurfaceWidth;
+            surfaceHeight = MyView.getMyView().SurfaceHeight;
+            leftXratio = MyView.getMyView().topY / surfaceHeight;
+            rightXratio = MyView.getMyView().bottomY / surfaceHeight;
+            topYratio = MyView.getMyView().leftX / surfaceWidth;
+            bottomYratio = MyView.getMyView().rightX / surfaceWidth;
+        } else if(i == 0){
+            surfaceWidth = AlbumDrawView.getAlbumDrawView().ViewWidth;
+            surfaceHeight =AlbumDrawView.getAlbumDrawView().ViewHeight;
+            leftXratio = AlbumDrawView.getAlbumDrawView().topY / surfaceHeight;
+            rightXratio = AlbumDrawView.getAlbumDrawView().bottomY / surfaceHeight;
+            topYratio = AlbumDrawView.getAlbumDrawView().leftX / surfaceWidth;
+            bottomYratio = AlbumDrawView.getAlbumDrawView().rightX / surfaceWidth;
+        }
+
         float bitimgWidth = bitimg.getWidth();
         float bitimgHeight = bitimg.getHeight();
 
@@ -182,7 +206,7 @@ public class CameraForOCR {
     }
 
     public void takePicture() {
-        camera.autoFocus(myAutoFocusCallback);
+        camera.autoFocus( myAutoFocusCallback );
         camera.takePicture(shutterCallback, null, bitmapCallback);
     }
 

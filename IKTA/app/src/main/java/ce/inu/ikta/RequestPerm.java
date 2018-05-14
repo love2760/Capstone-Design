@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,17 +18,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by NyuNyu on 2018-04-17.
  */
 
-public class RequestPerm {
+public class RequestPerm{
     private final static int PERMISSIONS_REQUEST_CODE = 100;
     Context ctx;
     Activity activity;
-    public RequestPerm(Context ctx, Activity activity) {
-        this.ctx = ctx;
+    public RequestPerm(Context context, Activity activity) {
+        ctx = context;
         this.activity = activity;
     }
     int getPermissionsRequestCode() {
@@ -198,6 +200,7 @@ public class RequestPerm {
         } catch (Exception ex) {
             Log.e( "RequestPerm", "Was not able to restart application" );
         }
+
     }
     public void monRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,

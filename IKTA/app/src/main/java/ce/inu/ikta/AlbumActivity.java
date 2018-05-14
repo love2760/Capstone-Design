@@ -29,7 +29,7 @@ public class AlbumActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     ImageView albumView;
     AlbumDrawView albumDrawView;
-    CameraForOCR camera;
+    CameraForOCR cameraForOCR;
     public AppCompatActivity activity;
     ImageButton cut_ok;
     float[] size;
@@ -66,7 +66,7 @@ public class AlbumActivity extends AppCompatActivity {
 
     public void setValue() {
         cut_ok = findViewById( R.id.cut_button );
-        camera = new CameraForOCR( context, activity );
+        cameraForOCR = new CameraForOCR( context, activity ,0);
     }
 
     public void setButton() {
@@ -76,7 +76,7 @@ public class AlbumActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(v.getId() == R.id.cut_button) {
                     cut_ok.setEnabled( false );
-                    ;
+                    cameraForOCR.cutImg();
                 }
                 else {
                 }
