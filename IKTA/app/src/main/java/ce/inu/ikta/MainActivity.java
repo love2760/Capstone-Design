@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
-        Toast.makeText( getApplicationContext(), "카메라 버튼을 길게 누르면 초점이 잡힙니다", Toast.LENGTH_LONG ).show();
+        Toast.makeText( getApplicationContext(), "카메라 버튼을 길게 누르면 초점을 잡아줍니다", Toast.LENGTH_LONG ).show();
         setValue();
         setListener();
         requestPerm = new RequestPerm( ctx, activity );
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayout = (LinearLayout) findViewById( R.id.cameraTopView );
         cameraShtBtn = (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         requestPerm = new RequestPerm( this, this );
-        cameraForOCR = new CameraForOCR( ctx, mActivity,1 );
+        cameraForOCR = new CameraForOCR( ctx, mActivity );
         dataBasesOpen = new DataBasesOpen( MainActivity.this );
     }
 
