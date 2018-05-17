@@ -44,17 +44,6 @@ public class AlbumActivity extends AppCompatActivity {
         albumView = (ImageView) findViewById( R.id.album );
         cutImg = new CutImg( context, activity, cut_ok );
 
-        cut_ok.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.cut_button) {
-                    cut_ok.setEnabled( false );
-                    cutImg.cutImage();
-                } else {
-                }
-            }
-        } );
-
         Intent intent = getIntent();
         Uri uri = intent.getParcelableExtra( "uri" );
         try {
@@ -66,6 +55,17 @@ public class AlbumActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        cut_ok.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.cut_button) {
+                    cut_ok.setEnabled( false );
+                    cutImg.cutImage();
+                } else {
+                }
+            }
+        } );
     }
 
     @Override
