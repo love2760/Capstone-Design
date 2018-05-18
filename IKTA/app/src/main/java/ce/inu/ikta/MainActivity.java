@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Activity activity;
     ImageButton cameraShtBtn;
     OrientationEventListener orientEventListener;
-    public DataBasesOpen dataBasesOpen;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
     CameraForOCR cameraForOCR;
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         setListener();
         requestPerm = new RequestPerm( ctx, activity );
         requestPerm.setPermissions();
-        dataBasesOpen.DB();
     }
 
     @Override
@@ -117,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         cameraShtBtn = (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
         requestPerm = new RequestPerm( this, this );
         cameraForOCR = new CameraForOCR( ctx, mActivity );
-        dataBasesOpen = new DataBasesOpen( MainActivity.this );
     }
 
     //각종 리스너 선언
