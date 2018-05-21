@@ -209,6 +209,7 @@ public class CameraForOCR {
                                 Intent i = new Intent( ctx, resultActivity.class );
                                 i.putExtra( "ocrString", OCRResultStirng );
                                 ((ImageButton) mactivity.findViewById( R.id.cameraShutterBtn )).setEnabled( true );
+                                ctx.startActivity( i );
                             }
                         } ).setNegativeButton( "취소",
                         new DialogInterface.OnClickListener() {

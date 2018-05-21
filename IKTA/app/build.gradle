@@ -50,4 +50,6 @@ dependencies {
     compile 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0' exclude module: 'httpclient'
+    //그래프뷰
+    implementation files('libs/GraphView-4.2.1.jar')
 }

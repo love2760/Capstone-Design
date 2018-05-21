@@ -39,10 +39,10 @@ public class DataBase extends SQLiteOpenHelper {
      * 정상적으로 종료시 0 반환
      * 실패시 1 반환
      *************************************/
-    public int insert(String input, String plot, String answer, String solution) {
+    public int insert(String input, String answer, String plot, String solution) {
         try {
             long currentTime = System.currentTimeMillis();
-            mdatabase.execSQL("INSERT INTO SAVEDATA VALUES (null," + input + "," + plot + "," + answer + "," + solution + "," + currentTime + " );");
+            mdatabase.execSQL("INSERT INTO SAVEDATA VALUES (null," + input + "," + answer + "," + plot + "," + solution + "," + currentTime + " );");
             return 0;
         }
         catch(Exception e) {
@@ -108,20 +108,20 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void createTable(SQLiteDatabase db) {
         /*********************
-        * Table 생성
-        * _id INTEGER
-        * _input TEXT
-        * _plot TEXT
-        * _answer TEXT
-        * _solution TEXT
-        * _date REAL
-        * *******************/
+         * Table 생성
+         * _id INTEGER
+         * _input TEXT
+         * _plot TEXT
+         * _answer TEXT
+         * _solution TEXT
+         * _date REAL
+         * *******************/
         db.execSQL("CREATE TABLE SAVEDATA(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "_input TEXT NOT NULL,"+
-        "_plot TEXT NOT NULL," +
-        "_answer TEXT NOT NULL," +
-        "_solution TEXT NOT NULL," +
-        "_date REAL);");
+                "_input TEXT NOT NULL,"+
+                "_plot TEXT NOT NULL," +
+                "_answer TEXT NOT NULL," +
+                "_solution TEXT NOT NULL," +
+                "_date REAL);");
         Log.v(getClass().getName(), "SAVEDATA 테이블 작성 완료");
     }
 

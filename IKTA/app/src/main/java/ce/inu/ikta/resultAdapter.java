@@ -11,6 +11,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -91,17 +93,16 @@ public class resultAdapter extends BaseExpandableListAdapter {
             //하위 그룹 뷰의 xml 생성
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
-            /*
+
             if (groupPosition == 2) {
                 view = inflater.inflate( R.layout.result_childimg, null );
+                GraphView graphView = (GraphView) view.findViewById( R.id.childGraphView );
 
-                //String를 Bitmap으로 변환
-                byte[] decodedByteArray = Base64.decode(childlist, Base64.NO_WRAP);
-                Bitmap bitmap = BitmapFactory.decodeByteArray( decodedByteArray, 0, decodedByteArray.length );
+                /*
+                여기에 그래프 뷰 작성
+                 */
 
-                ImageView imageChild = (ImageView) view.findViewById( R.id.childimg );
-                imageChild.setImageBitmap( bitmap );
-            }*/
+            }
             //else {
                 view = inflater.inflate( R.layout.result_childtxt, null );
                 TextView textChild = (TextView) view.findViewById( R.id.childtxt );

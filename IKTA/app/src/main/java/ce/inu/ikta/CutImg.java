@@ -34,11 +34,14 @@ public class CutImg {
     public void cutImage() {
         int[] imgData = sizeXY();
 
-        bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true);
-        bitimg = Bitmap.createBitmap( bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), null, true );
+        //bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true);
+        //bitimg = Bitmap.createBitmap( bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), null, true );
+
+        bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true );
         showCheckForEquationAlertdialog();
     }
 
+    /*
     private int[] sizeXY() {
         float viewWidth = AlbumDrawView.getAlbumDrawView().ViewWidth;
         float viewHeight = AlbumDrawView.getAlbumDrawView().ViewHeight;
@@ -62,6 +65,36 @@ public class CutImg {
         int imgWidth = (int) Math.abs( imgLeftX - imgRightX );
         int imgHeight = (int) Math.abs( imgBottomY - imgTopY );
         int[] imgData = {imgX, imgY, imgWidth, imgHeight};
+
+        return imgData;
+    }*/
+
+
+    private int[] sizeXY() {
+        //이미지 뷰의 너비와 높이
+        float viewWidth = AlbumDrawView.getAlbumDrawView().ViewWidth;
+        float viewHeight = AlbumDrawView.getAlbumDrawView().ViewHeight;
+
+        //이미지의 너비와 높이
+        float imgWidth = bitimg.getWidth();
+        float imgHeight = bitimg.getHeight();
+
+        //상자
+        float top = AlbumDrawView.getAlbumDrawView().topY;
+        float bottom = AlbumDrawView.getAlbumDrawView().bottomY;
+        float left = AlbumDrawView.getAlbumDrawView().leftX;
+        float right = AlbumDrawView.getAlbumDrawView().rightX;
+
+        //시작점
+        int startX = (int)(((viewWidth-right)*imgWidth)/viewWidth);
+        int startY = (int)((top*imgHeight)/viewHeight);
+
+        //상자의 너비와 높이
+        int boxWidth = (int)((Math.abs(right-left)*imgWidth)/viewWidth);
+        int boxHeight = (int)((Math.abs(bottom-top)*imgHeight)/viewHeight);
+
+        int[] imgData = {startX, startY, boxWidth, boxHeight};
+
 
         return imgData;
     }

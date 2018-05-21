@@ -1,7 +1,10 @@
 package ce.inu.ikta;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +24,8 @@ public class resultActivity extends AppCompatActivity {
     ImageView imgView;
     String TAG = "resultActivity";
     ExpandableListView listView;
+    SQLiteOpenHelper helper = null;
+    SQLiteDatabase database = null;
     private ArrayList<String> grplist = new ArrayList<String>(); //상위 리스트
     private HashMap<String, ArrayList<String>> child = new HashMap<String, ArrayList<String>>(  ); //하위 리스트
     String data;
@@ -33,9 +38,8 @@ public class resultActivity extends AppCompatActivity {
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
         Intent intent = getIntent();
-        //data = intent.getStringExtra( "ocrString" );
-        data = "logx+10=0";
-         wolframalpha = new wolframalpha();
+        data = intent.getStringExtra( "ocrString" );
+        wolframalpha = new wolframalpha();
 
         setAdaptering();
 
@@ -120,6 +124,11 @@ public class resultActivity extends AppCompatActivity {
     Button.OnClickListener Save_Btn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            database = helper.getWritableDatabase();
+
+            ContentValues values = new ContentValues( );
+            //values.put("input", );
+
             Intent intent = new Intent( ctx, SaveActivity.class );
             ctx.startActivity( intent );
         }
