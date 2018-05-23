@@ -123,26 +123,22 @@ public class AlbumDrawView extends View {
                     if (rightX <= leftX+dep)      rightX = leftX+dep;
                     if (bottomY <= topY+dep)  bottomY = topY+dep;
 
-                    //화면 밖으로 나가지 않게 처리
-                    if (leftX <= linearWidth*0.1f) leftX = linearWidth*0.1f;
-                    if (rightX >= linearWidth*0.9f) rightX = linearWidth*0.9f;
-                    if (topY <= linearHeight*0.1f) topY = linearHeight*0.1f;
-                    if (bottomY >= linearHeight*0.9f) bottomY = linearHeight*0.9f;
-
                     //상자 움직인 거리 구해서 적용
                     if(bBoxMove) {
-                        drawX = oldX - x;
-                        drawY = oldY - y;
+                        drawX = oldX - x*0.01f;
+                        drawY = oldY - y*0.01f;
 
                         leftX -= drawX;
                         rightX -= drawX;
                         topY -= drawY;
                         bottomY -= drawY;
 
-                        if(leftX <= linearWidth*0.1f) leftX = linearWidth*0.1f;
-                        if(rightX >= linearWidth*0.9f) rightX = linearWidth*0.9f;
-                        if(topY <= linearHeight*0.1f) topY = linearHeight*0.1f;
-                        if(bottomY >= linearHeight*0.9f) bottomY = linearHeight*0.9f;
+                        if(leftX <= 0) {leftX = 0;}
+                        if(rightX >= ViewWidth) {rightX = ViewWidth;}
+                        if(topY <= 0) {topY = 0;}
+                        if(bottomY >= ViewHeight) {bottomY = ViewHeight;}
+
+                        return true;
                     }
 
                     invalidate(); // 움직일 때 다시 그림

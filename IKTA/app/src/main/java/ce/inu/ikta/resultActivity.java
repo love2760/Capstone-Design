@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 
+import com.google.api.client.util.DateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,11 +26,12 @@ public class resultActivity extends AppCompatActivity {
     ImageView imgView;
     String TAG = "resultActivity";
     ExpandableListView listView;
-    SQLiteOpenHelper helper = null;
-    SQLiteDatabase database = null;
+    DataBase helper;
+    SQLiteDatabase database;
     private ArrayList<String> grplist = new ArrayList<String>(); //상위 리스트
     private HashMap<String, ArrayList<String>> child = new HashMap<String, ArrayList<String>>(  ); //하위 리스트
     String data;
+    wolfData wolfdata;
     ce.inu.ikta.wolframalpha wolframalpha;
 
 
@@ -57,7 +60,7 @@ public class resultActivity extends AppCompatActivity {
     //리스트뷰 구성
     private void setListData() {
 
-        wolfData wolfdata = wolframalpha.Wolfoutput( data );
+        wolfdata = wolframalpha.Wolfoutput( data );
 
         Log.d(TAG, "data 넣기");
         grplist.add("식");
@@ -120,19 +123,24 @@ public class resultActivity extends AppCompatActivity {
         }
     };
 
-    //저장 버튼(미구현)
+    //저장 버튼
     Button.OnClickListener Save_Btn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            helper = new DataBase( ctx );
             database = helper.getWritableDatabase();
 
             ContentValues values = new ContentValues( );
-            //values.put("input", );
+            values.put("input", wolfdata.input);
+            values.put("answer", wolfdata.answer);
+            values.put("graph", wolfdata.graph);
+            values.put("solution", wolfdata.solution);
+
+            database.insert( "IKTA.SAVEDATA", null, values );
 
             Intent intent = new Intent( ctx, SaveActivity.class );
             ctx.startActivity( intent );
         }
     };
-
 
 }
