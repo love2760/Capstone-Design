@@ -14,7 +14,7 @@ import android.util.Log;
 
 public class DataBase extends SQLiteOpenHelper {
     private static final String dbname = "IKTA.SAVEDATA";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     SQLiteDatabase mdatabase;
 
     public DataBase(Context context) {
@@ -40,10 +40,12 @@ public class DataBase extends SQLiteOpenHelper {
      * 정상적으로 종료시 0 반환
      * 실패시 1 반환
      *************************************/
-    public int insert(String input, String answer, String plot, String solution) {
+    public int insert(String input, String answer, String plot) {
         try {
             long currentTime = System.currentTimeMillis();
-            mdatabase.execSQL("INSERT INTO SAVEDATA VALUES (null," + input + "," + answer + "," + plot + "," + solution + "," + currentTime + " );");
+            Log.d( getClass().getName(), "INSERT INTO SAVEDATA VALUES (null,\"" + input + "\",\""  + plot + "\",\"" + answer + "\"," + currentTime + " );" );
+            mdatabase.execSQL("INSERT INTO SAVEDATA VALUES (null,\"" + input + "\",\""  + plot + "\",\"" + answer + "\"," + currentTime + " );");
+            Log.d(getClass().getName(), "삽입 성공");
             return 0;
         }
         catch(Exception e) {
@@ -79,8 +81,7 @@ public class DataBase extends SQLiteOpenHelper {
         DBDataSet[] data = new DBDataSet[count];
         for(int i = 0 ; i < count ; i++) {
             data[i] = new DBDataSet(c.getInt(0),c.getString(1),
-                    c.getString(2),c.getString(3),
-                    c.getString(4),timeLongToString(c.getLong(5)));
+                    c.getString(2),c.getString(3), timeLongToString(c.getLong(4)));
             c.moveToNext();
         }
         return data;
@@ -88,7 +89,7 @@ public class DataBase extends SQLiteOpenHelper {
     public String timeLongToString(long milTime) {
         Time time = new Time();
         time.set(milTime);
-        String timeString = Integer.toString(time.year) +"년 " + Integer.toString(time.month) +"월 " + Integer.toString(time.monthDay) +"일 "
+        String timeString = Integer.toString(time.year) +"년 " + Integer.toString(time.month+1) +"월 " + Integer.toString(time.monthDay) +"일 \n"
                 + Integer.toString(time.hour) +"시 "+ Integer.toString(time.minute) +"분 "+ Integer.toString(time.second) +"초 ";
         return timeString;
     }
@@ -114,14 +115,12 @@ public class DataBase extends SQLiteOpenHelper {
          * _input TEXT
          * _plot TEXT
          * _answer TEXT
-         * _solution TEXT
          * _date REAL
          * *******************/
         db.execSQL("CREATE TABLE SAVEDATA(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "_input TEXT NOT NULL,"+
                 "_plot TEXT NOT NULL," +
                 "_answer TEXT NOT NULL," +
-                "_solution TEXT NOT NULL," +
                 "_date REAL);");
         Log.v(getClass().getName(), "SAVEDATA 테이블 작성 완료");
     }

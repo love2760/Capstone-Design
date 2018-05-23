@@ -26,8 +26,7 @@ public class resultActivity extends AppCompatActivity {
     ImageView imgView;
     String TAG = "resultActivity";
     ExpandableListView listView;
-    DataBase helper;
-    SQLiteDatabase database;
+    DataBase dataBase;
     private ArrayList<String> grplist = new ArrayList<String>(); //상위 리스트
     private HashMap<String, ArrayList<String>> child = new HashMap<String, ArrayList<String>>(  ); //하위 리스트
     String data;
@@ -41,7 +40,8 @@ public class resultActivity extends AppCompatActivity {
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
         Intent intent = getIntent();
-        data = intent.getStringExtra( "ocrString" );
+       // data = intent.getStringExtra( "ocrString" );
+        data = "1+5";
         wolframalpha = new wolframalpha();
 
         setAdaptering();
@@ -66,7 +66,6 @@ public class resultActivity extends AppCompatActivity {
         grplist.add("식");
         grplist.add("답");
         grplist.add("그래프");
-        grplist.add("풀이");
 
         ArrayList<String> input = new ArrayList<String>(  );
         input.add(wolfdata.input);
@@ -74,14 +73,11 @@ public class resultActivity extends AppCompatActivity {
         answer.add(wolfdata.answer);
         ArrayList<String> graph = new ArrayList<String>(  );
         graph.add(wolfdata.graph);
-        ArrayList<String> solution = new ArrayList<String>(  );
-        solution.add(wolfdata.solution);
 
         child.put(grplist.get(0), input);
         Log.d(TAG,"식 ArrayList에 무엇이 들었을까요"+input);
         child.put(grplist.get(1), answer);
         child.put(grplist.get(2), graph);
-        child.put(grplist.get(3), solution);
     }
 
     private void setAdaptering() {
@@ -127,19 +123,13 @@ public class resultActivity extends AppCompatActivity {
     Button.OnClickListener Save_Btn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            helper = new DataBase( ctx );
-            database = helper.getWritableDatabase();
+            dataBase = new DataBase( ctx );
 
-            ContentValues values = new ContentValues( );
-            values.put("input", wolfdata.input);
-            values.put("answer", wolfdata.answer);
-            values.put("graph", wolfdata.graph);
-            values.put("solution", wolfdata.solution);
-
-            database.insert( "IKTA.SAVEDATA", null, values );
+            dataBase.insert( wolfdata.input, wolfdata.answer, wolfdata.graph );
 
             Intent intent = new Intent( ctx, SaveActivity.class );
             ctx.startActivity( intent );
+            finish();
         }
     };
 

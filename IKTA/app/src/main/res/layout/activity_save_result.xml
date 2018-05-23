@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="ce.inu.ikta.SaveResultActivity">
 
+    <!-- 결과창을 보여줄 expandableListview -->
     <ExpandableListView
-        android:id="@+id/saveExpList"
+        android:id="@+id/saveExpandableListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:fastScrollEnabled="true"
+        />
 
-</android.support.constraint.ConstraintLayout>
+    <!-- 결과 저장/취소 버튼(저장 ) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/Ok_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="처음으로"/>
+
+        <Button
+            android:id="@+id/Delete_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="삭제"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,11 +1,7 @@
 package ce.inu.ikta;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -72,13 +68,13 @@ public class AlbumActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         linearLayout = (LinearLayout) this.findViewById( R.id.top );
         size = new float[4];
-        size[0] = linearLayout.getWidth();
-        size[1] = linearLayout.getHeight();
+        size[0] = albumView.getX();
+        size[1] = albumView.getY();
         size[2] = albumView.getWidth();
         size[3] = albumView.getHeight();
         Log.d( TAG, "뇨로롱 " + size[2] + "  " + size[3] );
         albumDrawView = AlbumDrawView.create( context, size );
-        linearLayout.removeAllViews();
+        albumDrawView.albumDrawView = null;
         linearLayout.addView( albumDrawView, new RelativeLayout.LayoutParams
                 ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT )
         );

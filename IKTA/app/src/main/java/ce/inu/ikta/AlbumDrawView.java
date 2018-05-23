@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -18,7 +19,7 @@ public class AlbumDrawView extends View {
     static int dep = 70; // 150 했더니 터치 범위가 말도안되게 변해서 고침.
 
     Paint paint;
-    float linearWidth, linearHeight, ViewWidth, ViewHeight;
+    float ViewX, ViewY, ViewWidth, ViewHeight;
 
     static AlbumDrawView albumDrawView = null;
 
@@ -35,14 +36,14 @@ public class AlbumDrawView extends View {
 
     private AlbumDrawView(Context context, float[] size) {
         super(context);
-        linearWidth = size[0];
-        linearHeight = size[1];
+        ViewX = size[0];
+        ViewY = size[1];
         ViewWidth = size[2];
         ViewHeight =size[3];
-        leftX = linearWidth *0.1f;
-        rightX = linearWidth * 0.9f;
-        topY = linearHeight*0.45f;
-        bottomY = linearHeight * 0.55f;
+        leftX = ViewX;
+        rightX = ViewX+ViewWidth;
+        topY = ViewY;
+        bottomY = ViewY + ViewHeight;
         setOnTouchListener(onTouchListener);
     }
 
@@ -74,6 +75,7 @@ public class AlbumDrawView extends View {
 
                 int x = (int) motionEvent.getX();
                 int y = (int) motionEvent.getY();
+
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     oldX = x;
                     oldY = y;
@@ -83,11 +85,13 @@ public class AlbumDrawView extends View {
                     if ((x > leftX - dep) && (x < leftX + dep) ) {
                         if((y > topY) &&( y < bottomY)) {
                             boolLeftX = true;
+                            return true;
                         }
                     }//오른쪽선 체크
                     else if ((x > rightX - dep) && (x < rightX + dep)) {
                         if((y > topY) &&( y < bottomY)) {
                             boolRightX = true;
+                            return true;
                         }
                     }
 
@@ -95,19 +99,21 @@ public class AlbumDrawView extends View {
                     if ((y > topY - dep) && (y < topY + dep)) {
                         if((x > leftX) && (x < rightX)) {
                             boolTopY = true;
+                            return true;
                         }
                     } // 아래 선 체크
                     else if ((y > bottomY - dep) && (y < bottomY + dep)) {
                         if((x > leftX) && (x < rightX)) {
                             boolBottomY = true;
+                            return true;
                         }
                     }
 
                     //상자 움직이기
                     if(boolBottomY||boolLeftX||boolRightX||boolTopY) bBoxMove = false;
                     else
-                        if( ((x > leftX-dep) && (x < rightX+dep))
-                                && ((y > topY-dep) && (y < bottomY)) ) bBoxMove = true;
+                        if( ((x > leftX+dep) && (x < rightX-dep))
+                                && ((y > topY+dep) && (y < bottomY-dep)) ) bBoxMove = true;
 
                     return true;
                 }
@@ -119,30 +125,34 @@ public class AlbumDrawView extends View {
                     if (boolTopY) topY = y; // 위쪽 변 선택시 이동 처리
                     if (boolBottomY) bottomY = y; // 아래쪽 변 선택시 이동 처리
 
-                    //사각형의 최소크기 지정
-                    if (rightX <= leftX+dep)      rightX = leftX+dep;
-                    if (bottomY <= topY+dep)  bottomY = topY+dep;
 
                     //상자 움직인 거리 구해서 적용
                     if(bBoxMove) {
-                        drawX = oldX - x*0.01f;
-                        drawY = oldY - y*0.01f;
+                        drawX = oldX - x;
+                        drawY = oldY - y;
 
                         leftX -= drawX;
                         rightX -= drawX;
                         topY -= drawY;
                         bottomY -= drawY;
-
-                        if(leftX <= 0) {leftX = 0;}
-                        if(rightX >= ViewWidth) {rightX = ViewWidth;}
-                        if(topY <= 0) {topY = 0;}
-                        if(bottomY >= ViewHeight) {bottomY = ViewHeight;}
-
-                        return true;
                     }
 
+                    //사각형의 최소크기 지정
+                    if (topY > bottomY-( dep))   {topY = bottomY-( dep);}
+                    if (rightX < leftX+( dep))  {rightX = leftX+( dep);}
+                    //////////////////////////////////////////////////////
+                    if (bottomY < topY+( dep))  {bottomY = topY+( dep);}
+                    if (leftX > rightX-( dep))   {leftX = rightX-( dep);}
+                    //사각형 최대 크기 제한
+                    if (leftX <= ViewX) leftX = ViewX;
+                    if (rightX >= ViewWidth+ViewX) rightX = ViewWidth+ViewX;
+                    if (topY <= ViewY) topY = ViewY;
+                    if (bottomY >= ViewY +ViewHeight) bottomY = ViewY +ViewHeight;
+                    if(bottomY < ViewY+dep) bottomY = ViewY+dep;
+                    if(leftX > ViewX+ViewWidth-dep) leftX = ViewX+ViewWidth-dep;
                     invalidate(); // 움직일 때 다시 그림
-
+                    oldX = x;
+                    oldY = y;
                     return true;
                 }
 

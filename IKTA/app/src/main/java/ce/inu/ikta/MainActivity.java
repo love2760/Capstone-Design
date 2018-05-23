@@ -17,6 +17,7 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     Context ctx;
     Activity activity;
     ImageButton cameraShtBtn;
+    Button testB;
     OrientationEventListener orientEventListener;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     SurfaceView surfaceView;
     float[] size;
     final int REQ_CODE_SELECT_IMAGE = 100;
+    static boolean Flag = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,10 @@ public class MainActivity extends AppCompatActivity {
         size[1] = linearLayout.getHeight();
         size[2] = surfaceView.getWidth();
         size[3] = surfaceView.getHeight();
+        myView.myView = null;
         myView = MyView.create( ctx, size );
-        linearLayout.removeAllViews();
         linearLayout.addView( myView, new RelativeLayout.LayoutParams
-                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT )
-        );
+                ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT ) );
     }
 
     //메뉴 버튼 그림
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (menuItem.getItemId() == R.id.GoSaveList) {
             Intent intent = new Intent( ctx, SaveActivity.class );
             startActivity( intent );
+             
         } else if (menuItem.getItemId() == R.id.GoAlbum) {
             Intent intent = new Intent( Intent.ACTION_PICK );
             intent.setType( MediaStore.Images.Media.CONTENT_TYPE );
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra( "uri", uri );
                 Log.d( TAG, "여기는 메인의 uri " + uri );
                 ctx.startActivity( intent );
+                 
             }
         }
     }
@@ -113,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         linearLayout = (LinearLayout) findViewById( R.id.cameraTopView );
         cameraShtBtn = (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
+        //testB = (Button) findViewById( R.id.testBtn );
         requestPerm = new RequestPerm( this, this );
         cameraForOCR = new CameraForOCR( ctx, mActivity );
     }
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         if (orientEventListener.canDetectOrientation()) {
             orientEventListener.enable();   //방향 감지 가능 > 활성화
         } else {
-            finish();
+             
         }
 
         //카메라 버튼 클릭 리스너
@@ -143,6 +148,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } );
+
+        /*
+        testB.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId() == R.id.testBtn) {
+                    Intent i = new Intent( ctx, graphtest.class );
+                    startActivity( i );
+                }
+            }
+        } );*/
 
         //카메라 버튼 롱클릭 리스너(초점 잡아줌)
         cameraShtBtn.setOnLongClickListener( new View.OnLongClickListener() {

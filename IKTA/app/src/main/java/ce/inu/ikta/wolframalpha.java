@@ -13,7 +13,7 @@ import com.wolfram.alpha.WASubpod;
 public class wolframalpha {
 
     // 울프램알파 app id 입력
-    private static String appid = "E5AKEG-Q8EA9VLPE2";
+    private static String appid = "E5AKEG-TPQ2KK5A72";
     final String TAG = "wolfram";
     wolfData output;
     public wolfData requestWolf(String input) {
@@ -24,7 +24,7 @@ public class wolframalpha {
         query.setInput( input );
         String sinput = "empty";
         String answer = "empty";
-        String solution = "empty";
+        String graph = "empty";
         Log.d( TAG, "시작" );
 
         try {
@@ -75,7 +75,7 @@ public class wolframalpha {
         }
 
 
-        output = new wolfData( sinput, answer, null, "empty" );
+        output = new wolfData( sinput, answer, graph);
         return output;
     }
 
