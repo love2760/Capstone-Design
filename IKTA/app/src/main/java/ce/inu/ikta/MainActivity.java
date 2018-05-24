@@ -3,7 +3,6 @@ package ce.inu.ikta;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,30 +13,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.OrientationEventListener;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.api.client.util.StringUtils;
-
 import java.io.File;
-import java.net.URI;
-import java.security.Policy;
 
 public class MainActivity extends AppCompatActivity {
 
     //변수 및 객체 선언
     private static final String TAG = "MainActivity";
     Context ctx;
-    Activity activity;
     ImageButton cameraShtBtn;
-    Button testB;
     OrientationEventListener orientEventListener;
     public AppCompatActivity mActivity;
     RequestPerm requestPerm;
@@ -56,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText( getApplicationContext(), "카메라 버튼을 길게 누르면 초점을 잡아줍니다", Toast.LENGTH_LONG ).show();
         setValue();
         setListener();
-        requestPerm = new RequestPerm( ctx, activity );
+        requestPerm = new RequestPerm( ctx, this);
         requestPerm.setPermissions();
     }
 

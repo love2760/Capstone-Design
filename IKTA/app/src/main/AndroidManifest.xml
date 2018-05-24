@@ -46,7 +46,6 @@
             -->
         </activity>
         <activity android:name=".AlbumActivity" />
-        <activity android:name=".graphtest"></activity>
     </application>
 
 </manifest>
