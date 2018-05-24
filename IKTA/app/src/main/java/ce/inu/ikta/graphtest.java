@@ -1,15 +1,17 @@
 package ce.inu.ikta;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.content.Context;
+import android.util.AttributeSet;
 import android.util.Log;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import com.jjoe64.graphview.*;
 import com.jjoe64.graphview.series.*;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 public class graphtest extends AppCompatActivity {
 
@@ -20,38 +22,58 @@ public class graphtest extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_graphtest );
 
-        double y,x;
-        x= -5.0;
+        PrePlotString p= new PrePlotString();
+        float y,x;
+        x= -10.0f;
         String equ;
-        equ = "y=x+1";
+        equ = "y=x^0.5";
         GraphView graph = (GraphView) findViewById( R.id.GraphView);
-        series = new LineGraphSeries<DataPoint>();
 
-        for(int i = 0 ; i<500; i++)
-        {
-            x= x+0.1;
+        series = new LineGraphSeries<DataPoint>();
+        equ = p.multiplyX(equ);
+        for(int i = 0 ; i<=200; i++) {
+            x = x * 10;
+            x = Math.round( x );
+            x = x / 10;
             try {
-                y= (excute(equ,i));
-                series.appendData( new DataPoint( x,y ),true,500 );
+                Log.d( TAG, i + "번째" + x );
+                y = (excute( equ, x ));
+                series.appendData( new DataPoint( x, y ), true, 201 );
             } catch (ScriptException e) {
                 e.printStackTrace();
             }
-
+            x = x + 0.1f;
         }
-        graph.addSeries(series);
+        graph.addSeries( series );
+        graph.getViewport().setMinX(-10);
+        graph.getViewport().setMaxX(10);
+        graph.getViewport().setMinY(-10);
+        graph.getViewport().setMaxY(10);
+
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setXAxisBoundsManual(true);
     }
 
-    protected Double excute(String equ, int i) throws ScriptException {
+    protected float excute(String equ, float x) throws ScriptException {
+
         PrePlotString p= new PrePlotString();
-        String xequ = p.deleteEqual(equ);
-        Log.d( TAG, xequ);
-        String xequRep = xequ.replace("x",Integer.toString( i ));
-        Log.d( TAG, xequRep);
+        Log.d(TAG ,equ);
+        String xequRep = equ.replace("a",Float.toString(x));
+        xequRep = p.checkPow(xequRep);
+        Log.d( TAG,"그래프 전이에요" + xequRep);
+        Context rhino = Context.enter();
 
-        ScriptEngineManager mgr = new ScriptEngineManager();
-        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        rhino.setOptimizationLevel(-1);
 
-        final Double a = (Double) engine.eval( xequRep );
-        return a ;
+
+        try {
+            Scriptable scope = rhino.initStandardObjects();
+            Object obj = rhino.evaluateString(scope, xequRep, "JavaScript", 1, null);
+            String result = obj.toString();
+            float res = Float.parseFloat(result);
+            return res;
+        } finally {
+            Context.exit();
+        }
     }
 }

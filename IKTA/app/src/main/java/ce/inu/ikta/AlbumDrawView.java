@@ -138,10 +138,10 @@ public class AlbumDrawView extends View {
                     }
 
                     //사각형의 최소크기 지정
-                    if (topY > bottomY-( dep))   {topY = bottomY-( dep);}
+                    if (topY > bottomY-( dep) || bottomY < topY+( dep))   {topY = bottomY-( dep);bottomY = topY+( dep);}
                     if (rightX < leftX+( dep))  {rightX = leftX+( dep);}
                     //////////////////////////////////////////////////////
-                    if (bottomY < topY+( dep))  {bottomY = topY+( dep);}
+                    //if (bottomY < topY+( dep))  {bottomY = topY+( dep);}
                     if (leftX > rightX-( dep))   {leftX = rightX-( dep);}
                     //사각형 최대 크기 제한
                     if (leftX <= ViewX) leftX = ViewX;

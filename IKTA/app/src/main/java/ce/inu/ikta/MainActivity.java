@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         linearLayout = (LinearLayout) findViewById( R.id.cameraTopView );
         cameraShtBtn = (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
-        //testB = (Button) findViewById( R.id.testBtn );
+        testB = (Button) findViewById( R.id.testBtn );
         requestPerm = new RequestPerm( this, this );
         cameraForOCR = new CameraForOCR( ctx, mActivity );
     }
@@ -149,16 +149,16 @@ public class MainActivity extends AppCompatActivity {
             }
         } );
 
-        /*
+
         testB.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(v.getId() == R.id.testBtn) {
-                    Intent i = new Intent( ctx, graphtest.class );
-                    startActivity( i );
+                    Intent ie = new Intent( ctx, graphtest.class );
+                    startActivity( ie );
                 }
             }
-        } );*/
+        } );
 
         //카메라 버튼 롱클릭 리스너(초점 잡아줌)
         cameraShtBtn.setOnLongClickListener( new View.OnLongClickListener() {
