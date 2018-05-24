@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static ce.inu.ikta.globalValue.bitimg;
+import static ce.inu.ikta.globalValue.postImg;
 
 public class resultActivity extends AppCompatActivity {
     Context ctx;
-    ImageView imgView;
+    //ImageView imgView;
     String TAG = "resultActivity";
     ExpandableListView listView;
     DataBase dataBase;
@@ -40,8 +41,8 @@ public class resultActivity extends AppCompatActivity {
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         setContentView( R.layout.activity_result );
         Intent intent = getIntent();
-       // data = intent.getStringExtra( "ocrString" );
-        data = "1+5";
+        data = intent.getStringExtra( "ocrString" );
+        //data = "1+5";
         wolframalpha = new wolframalpha();
 
         setAdaptering();
@@ -49,11 +50,11 @@ public class resultActivity extends AppCompatActivity {
         setButton();    //저장/취소 버튼
 
         setValue(); //이미지 뷰
-        imgView.setImageBitmap( bitimg );   //이미지 뷰에 사진을 넣음
+        //imgView.setImageBitmap( postImg );   //이미지 뷰에 사진을 넣음
     }
 
     private void setValue() {
-        imgView = (ImageView) findViewById( R.id.resultimg );
+        //imgView = (ImageView) findViewById( R.id.resultimg );
         ctx = this;
     }
 
@@ -62,22 +63,26 @@ public class resultActivity extends AppCompatActivity {
 
         wolfdata = wolframalpha.Wolfoutput( data );
 
-        Log.d(TAG, "data 넣기");
+        Log.d(TAG, "식 넣기");
         grplist.add("식");
-        grplist.add("답");
-        grplist.add("그래프");
-
         ArrayList<String> input = new ArrayList<String>(  );
         input.add(wolfdata.input);
-        ArrayList<String> answer = new ArrayList<String>(  );
-        answer.add(wolfdata.answer);
-        ArrayList<String> graph = new ArrayList<String>(  );
-        graph.add(wolfdata.graph);
+        child.put(grplist.get(grplist.indexOf( "식" )), input);
 
-        child.put(grplist.get(0), input);
-        Log.d(TAG,"식 ArrayList에 무엇이 들었을까요"+input);
-        child.put(grplist.get(1), answer);
-        child.put(grplist.get(2), graph);
+        Log.d(TAG, "답 넣기");
+        ArrayList<String> answer = new ArrayList<String>(  );
+        if(wolfdata.answer.equals( "empty" ) == false) {
+            grplist.add( "답" );
+            answer.add( wolfdata.answer );
+            child.put( grplist.get( grplist.indexOf( "답" ) ), answer );
+        }
+        Log.d(TAG, "그래프 넣기");
+        ArrayList<String> graph = new ArrayList<String>(  );
+        if(wolfdata.input.indexOf( "y" ) != -1 ) {
+            grplist.add("그래프");
+            graph.add(wolfdata.input);
+            child.put(grplist.get(grplist.indexOf( "그래프" )), graph);
+        }
     }
 
     private void setAdaptering() {
@@ -124,8 +129,7 @@ public class resultActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             dataBase = new DataBase( ctx );
-
-            dataBase.insert( wolfdata.input, wolfdata.answer, wolfdata.graph );
+            dataBase.insert( wolfdata.input, wolfdata.answer, wolfdata.input );
 
             Intent intent = new Intent( ctx, SaveActivity.class );
             ctx.startActivity( intent );

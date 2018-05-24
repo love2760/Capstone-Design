@@ -7,7 +7,9 @@
     android:orientation="vertical"
     tools:context="ce.inu.ikta.resultActivity">
 
+
     <!-- 이미지 확인을 위해 임시로 넣음 -->
+    <!--
     <ImageView
         android:id="@+id/resultimg"
         android:layout_width="match_parent"
@@ -16,6 +18,7 @@
         android:scaleType="centerInside"
         app:srcCompat="@color/colorAccent"
         />
+    -->
 
     <!-- 결과창을 보여줄 expandableListview -->
     <ExpandableListView
@@ -24,6 +27,8 @@
         android:layout_height="0dp"
         android:layout_weight="6"
         android:fastScrollEnabled="true"
+        android:dividerHeight="2dp"
+        android:divider="#DDDDDD"
         />
 
     <!-- 결과 저장/취소 버튼(저장 ) -->

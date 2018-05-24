@@ -1,7 +1,5 @@
 package ce.inu.ikta;
 
-import android.util.Log;
-
 /**
  * Created by NyuNyu on 2018-05-23.
  */
@@ -36,15 +34,14 @@ public class PrePlotString {
         }
         String back = equ.substring(powSign+1,bidx);
 
-            float fn = Float.parseFloat( front );
-            float bn = Float.parseFloat( back );
+            double fn = Double.parseDouble( front );
+            double bn = Double.parseDouble( back );
         if(fn != 0) {
-            float tmp = (float)Math.pow( fn, bn );
-            Log.d( "PrePlotString", "지수 계산 결과 : " + tmp + "" );
-            return equ.replace( equ.substring( fidx + 1, bidx ), Float.toString( tmp ) );
+            double tmp = (double)Math.pow( fn, bn );
+            return equ.replace( equ.substring( fidx + 1, bidx ), Double.toString( tmp ) );
         }
         else {
-            return equ.replace( equ.substring( fidx + 1, bidx ), Float.toString( 0 ) );
+            return equ.replace( equ.substring( fidx + 1, bidx ), Double.toString( 0 ) );
         }
     }
     public String deleteEqual(String equ)
@@ -67,7 +64,7 @@ public class PrePlotString {
         //조건식 x 앞이 숫자거나 ')'이다.
         if(powSign != 0) {
             if (xequ.charAt( fidx ) >= 0x30 && xequ.charAt( fidx ) <= 0x39 || xequ.charAt( fidx ) == 0x29) {
-                xequ = xequ.replaceFirst( "x", "*a" );
+                    xequ = xequ.replaceFirst( "x", "*a" );
 
             } else {
                 xequ = xequ.replaceFirst( "x", "a" );
@@ -77,9 +74,9 @@ public class PrePlotString {
         {
             xequ = xequ.replaceFirst( "x", "a" );
         }
-        Log.d("ㅇㅇ",xequ+"얘에요");
         equ = multiplyX( xequ );
         return equ;
     }
+
 }
 

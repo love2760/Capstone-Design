@@ -94,20 +94,18 @@ public class resultAdapter extends BaseExpandableListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
 
-            if (groupPosition == 2) {
+            if (list.get( groupPosition ) == "그래프") {
                 view = inflater.inflate( R.layout.result_childimg, null );
                 GraphView graphView = (GraphView) view.findViewById( R.id.childGraphView );
 
-                /*
-                여기에 그래프 뷰 작성
-                 */
-
+                Graph graph = new Graph();
+                graph.draw( childlist,graphView );
             }
-            //else {
+            else {
                 view = inflater.inflate( R.layout.result_childtxt, null );
                 TextView textChild = (TextView) view.findViewById( R.id.childtxt );
                 textChild.setText( childlist );
-           //}
+           }
         }
 
         return view;

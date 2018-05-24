@@ -6,7 +6,7 @@
     <!-- 하위그룹 중 그래프 부분을 표시할 그래프 뷰 -->
     <com.jjoe64.graphview.GraphView
         android:id="@+id/childGraphView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="400dp" />
 
 </LinearLayout>

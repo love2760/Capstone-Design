@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         size[1] = linearLayout.getHeight();
         size[2] = surfaceView.getWidth();
         size[3] = surfaceView.getHeight();
+        linearLayout.removeAllViews();
         myView.myView = null;
         myView = MyView.create( ctx, size );
         linearLayout.addView( myView, new RelativeLayout.LayoutParams
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         linearLayout = (LinearLayout) findViewById( R.id.cameraTopView );
         cameraShtBtn = (ImageButton) findViewById( R.id.cameraShutterBtn );  //카메라 버튼 id 매칭
-        testB = (Button) findViewById( R.id.testBtn );
         requestPerm = new RequestPerm( this, this );
         cameraForOCR = new CameraForOCR( ctx, mActivity );
     }
@@ -145,17 +145,6 @@ public class MainActivity extends AppCompatActivity {
                     cameraShtBtn.setEnabled( false ); //버튼이 눌렸을 때 버튼을 비활성화
                     cameraForOCR.takePicture();
                 } else {
-                }
-            }
-        } );
-
-
-        testB.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(v.getId() == R.id.testBtn) {
-                    Intent ie = new Intent( ctx, graphtest.class );
-                    startActivity( ie );
                 }
             }
         } );

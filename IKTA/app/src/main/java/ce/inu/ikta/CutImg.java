@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.widget.ImageButton;
 
 import static ce.inu.ikta.globalValue.bitimg;
+import static ce.inu.ikta.globalValue.postImg;
 
 /**
  * Created by NyuNyu on 2018-05-15.
@@ -23,34 +25,38 @@ public class CutImg {
     Context context;
     Activity activity;
     ImageButton imageButton;
+    float width, height;
+    float imgx,imgy;
     private static String OCRResultStirng;
 
-    public CutImg(Context context, Activity activity, ImageButton imageButton) {
+    public CutImg(Context context, Activity activity, ImageButton imageButton, float[] imgviewSize) {
         this.context = context;
         this.activity = activity;
         this.imageButton = imageButton;
+        imgx = imgviewSize[0];imgy = imgviewSize[1];
+        this.width = imgviewSize[2];
+        this.height = imgviewSize[3];
     }
 
-    public void cutImage() {
-        int[] imgData = sizeXY();
-
+    public void cutImage( float topy,float bottomy,float leftx, float rightx) {
+        int[] imgData = sizeXY( topy, bottomy, leftx, rightx );
         //bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true);
         //bitimg = Bitmap.createBitmap( bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), null, true );
-
-        bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true );
+        Log.d( getClass().getName(),imgData[0] +" "+imgData[1] +" "+imgData[2] +" "+imgData[3] +" bit"+bitimg.getWidth() +" "+bitimg.getHeight()+" " );
+        postImg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true );
         showCheckForEquationAlertdialog();
     }
 
-    /*
-    private int[] sizeXY() {
-        float viewWidth = AlbumDrawView.getAlbumDrawView().ViewWidth;
-        float viewHeight = AlbumDrawView.getAlbumDrawView().ViewHeight;
 
-        float leftXratio = AlbumDrawView.getAlbumDrawView().topY / viewHeight;
-        float rightXratio = AlbumDrawView.getAlbumDrawView().bottomY / viewHeight;
-        float topYratio = AlbumDrawView.getAlbumDrawView().leftX / viewWidth;
-        float bottomYratio = AlbumDrawView.getAlbumDrawView().rightX / viewWidth;
-
+    private int[] sizeXY(float topy,float bottomy,float leftx, float rightx) {
+        float viewWidth = width;
+        float viewHeight = height;
+        Log.d( getClass().getName(),"img x \timg y\n"+imgx+"\t"+imgy+"\n"+topy+ " "+bottomy+ " "+leftx+ " "+rightx+ " "+width+ " "+height+ " " );
+        float leftXratio = (leftx- imgx) / viewWidth;
+        float rightXratio = (rightx -imgx )/ viewWidth;
+        float topYratio = (topy-imgy) / viewHeight;
+        float bottomYratio = (bottomy - imgy )/ viewHeight;
+        Log.d (getClass().getName(), leftXratio+" "+rightXratio+" "+topYratio+" "+bottomYratio+" ");
         float bitimgWidth = bitimg.getWidth();
         float bitimgHeight = bitimg.getHeight();
 
@@ -64,37 +70,8 @@ public class CutImg {
         int imgY = (int) imgTopY;
         int imgWidth = (int) Math.abs( imgLeftX - imgRightX );
         int imgHeight = (int) Math.abs( imgBottomY - imgTopY );
+
         int[] imgData = {imgX, imgY, imgWidth, imgHeight};
-
-        return imgData;
-    }*/
-
-
-    private int[] sizeXY() {
-        //이미지 뷰의 너비와 높이
-        float viewWidth = AlbumDrawView.getAlbumDrawView().ViewWidth;
-        float viewHeight = AlbumDrawView.getAlbumDrawView().ViewHeight;
-
-        //이미지의 너비와 높이
-        float imgWidth = bitimg.getWidth();
-        float imgHeight = bitimg.getHeight();
-
-        //상자
-        float top = AlbumDrawView.getAlbumDrawView().topY;
-        float bottom = AlbumDrawView.getAlbumDrawView().bottomY;
-        float left = AlbumDrawView.getAlbumDrawView().leftX;
-        float right = AlbumDrawView.getAlbumDrawView().rightX;
-
-        //시작점
-        int startX = (int)(((viewWidth-right)*imgWidth)/viewWidth);
-        int startY = (int)((top*imgHeight)/viewHeight);
-
-        //상자의 너비와 높이
-        int boxWidth = (int)((Math.abs(right-left)*imgWidth)/viewWidth);
-        int boxHeight = (int)((Math.abs(bottom-top)*imgHeight)/viewHeight);
-
-        int[] imgData = {startX, startY, boxWidth, boxHeight};
-
 
         return imgData;
     }
@@ -108,14 +85,24 @@ public class CutImg {
                 progDialog.dismiss();
                 // 식이 정상적인지 확인하는 dialog
                 AlertDialog.Builder alert = new AlertDialog.Builder( context );
-                alert.setTitle( "다음의 식이 맞습니까?" ).setMessage( OCRResultStirng ).setCancelable( false ).setPositiveButton( "확인",
+                String onlyPrint;
+                if(OCRResultStirng == null) {
+                    onlyPrint = "문자 인식에 실패하였습니다.";
+                } else {
+                    onlyPrint =OCRResultStirng;
+                }
+                alert.setTitle( "다음의 식이 맞습니까?" ).setMessage( onlyPrint ).setCancelable( false ).setPositiveButton( "확인",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent( context, resultActivity.class );
-                                i.putExtra( "ocrString", OCRResultStirng );
-                                imageButton.setEnabled( true );
-                                context.startActivity( i );
+                                if(OCRResultStirng != null) {
+                                    Intent i = new Intent( context, resultActivity.class );
+                                    i.putExtra( "ocrString", OCRResultStirng );
+                                    imageButton.setEnabled( true );
+                                    context.startActivity( i );
+                                } else {
+                                    imageButton.setEnabled( true );
+                                }
                             }
                         } ).setNegativeButton( "취소",
                         new DialogInterface.OnClickListener() {
@@ -144,7 +131,7 @@ public class CutImg {
             protected Object doInBackground(Object[] objects) {
                 OCRResultStirng = "Failed";
                 CloudVisionAPI cloudVisionAPI = CloudVisionAPI.Initializer();
-                OCRResultStirng = cloudVisionAPI.request( bitimg );
+                OCRResultStirng = cloudVisionAPI.request( postImg );
                 return null;
             }
         };

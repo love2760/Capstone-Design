@@ -40,17 +40,17 @@ public class AlbumDrawView extends View {
         ViewY = size[1];
         ViewWidth = size[2];
         ViewHeight =size[3];
-        leftX = ViewX;
-        rightX = ViewX+ViewWidth;
-        topY = ViewY;
-        bottomY = ViewY + ViewHeight;
+        leftX = ViewX+ViewWidth/3;
+        rightX = ViewX+ViewWidth*2/3;
+        topY = ViewY+ViewHeight/3;
+        bottomY = ViewY + ViewHeight*2/3;
         setOnTouchListener(onTouchListener);
     }
 
     protected void onDraw(Canvas canvas) {
 
         paint = new Paint();
-        paint.setColor( Color.BLACK );
+        paint.setColor( Color.BLUE);
         paint.setStrokeWidth( 5 );
 
         //사각형 선 그리기
@@ -125,6 +125,13 @@ public class AlbumDrawView extends View {
                     if (boolTopY) topY = y; // 위쪽 변 선택시 이동 처리
                     if (boolBottomY) bottomY = y; // 아래쪽 변 선택시 이동 처리
 
+                    //사각형의 최소크기 지정
+                    if (topY > bottomY-dep && boolTopY)   {topY = bottomY-dep;}
+                    if (rightX < leftX+dep && boolRightX)  {rightX = leftX+dep;}
+                    //////////////////////////////////////////////////////
+                    if (bottomY < topY+dep && boolBottomY)  {bottomY = topY+dep;}
+                    if (leftX > rightX-dep && boolLeftX)   {leftX = rightX-dep;}
+
 
                     //상자 움직인 거리 구해서 적용
                     if(bBoxMove) {
@@ -135,14 +142,13 @@ public class AlbumDrawView extends View {
                         rightX -= drawX;
                         topY -= drawY;
                         bottomY -= drawY;
+                        if (topY > bottomY-dep)   {topY = bottomY-dep;}
+                        if (rightX < leftX+dep)  {rightX = leftX+dep;}
+
+
                     }
 
-                    //사각형의 최소크기 지정
-                    if (topY > bottomY-( dep) || bottomY < topY+( dep))   {topY = bottomY-( dep);bottomY = topY+( dep);}
-                    if (rightX < leftX+( dep))  {rightX = leftX+( dep);}
-                    //////////////////////////////////////////////////////
-                    //if (bottomY < topY+( dep))  {bottomY = topY+( dep);}
-                    if (leftX > rightX-( dep))   {leftX = rightX-( dep);}
+
                     //사각형 최대 크기 제한
                     if (leftX <= ViewX) leftX = ViewX;
                     if (rightX >= ViewWidth+ViewX) rightX = ViewWidth+ViewX;

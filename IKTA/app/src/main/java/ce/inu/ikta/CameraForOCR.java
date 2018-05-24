@@ -25,6 +25,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 import static ce.inu.ikta.globalValue.bitimg;
+import static ce.inu.ikta.globalValue.postImg;
 
 /**
  * Created by 김광현 on 2018-04-18.
@@ -126,8 +127,8 @@ public class CameraForOCR {
             matrix.postRotate( checkDeviceOrientation( orientation ) );
 
             int[] imgData = sizeXY();
-            bitimg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true );
-            bitimg = Bitmap.createBitmap( bitimg, 0, 0, bitimg.getWidth(), bitimg.getHeight(), matrix, true );
+            postImg = Bitmap.createBitmap( bitimg, imgData[0], imgData[1], imgData[2], imgData[3], null, true );
+            postImg = Bitmap.createBitmap( postImg, 0, 0, postImg.getWidth(), postImg.getHeight(), matrix, true );
 
             Log.d( TAG, "bitmapCallback close" );
             reset();
@@ -202,14 +203,23 @@ public class CameraForOCR {
                 progDialog.dismiss();
                 // 식이 정상적인지 확인하는 dialog
                 AlertDialog.Builder alert = new AlertDialog.Builder( ctx );
-                alert.setTitle( "다음의 식이 맞습니까?" ).setMessage( OCRResultStirng ).setCancelable( false ).setPositiveButton( "확인",
+                String onlyPrint;
+                if(OCRResultStirng == null) {
+                    onlyPrint = "문자 인식에 실패하였습니다.";
+                } else {
+                    onlyPrint =OCRResultStirng;
+                }
+                alert.setTitle( "다음의 식이 맞습니까?" ).setMessage( onlyPrint ).setCancelable( false ).setPositiveButton( "확인",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent( ctx, resultActivity.class );
-                                i.putExtra( "ocrString", OCRResultStirng );
+                                if(OCRResultStirng != null) {
+                                    Intent i = new Intent( ctx, resultActivity.class );
+                                    i.putExtra( "ocrString", OCRResultStirng );
+                                    ((ImageButton) mactivity.findViewById( R.id.cameraShutterBtn )).setEnabled( true );
+                                    ctx.startActivity( i );
+                                }
                                 ((ImageButton) mactivity.findViewById( R.id.cameraShutterBtn )).setEnabled( true );
-                                ctx.startActivity( i );
                             }
                         } ).setNegativeButton( "취소",
                         new DialogInterface.OnClickListener() {
@@ -238,7 +248,7 @@ public class CameraForOCR {
             protected Object doInBackground(Object[] objects) {
                 OCRResultStirng = "Failed";
                 CloudVisionAPI cloudVisionAPI = CloudVisionAPI.Initializer();
-                OCRResultStirng = cloudVisionAPI.request( bitimg );
+                OCRResultStirng = cloudVisionAPI.request( postImg );
                 return null;
             }
         };

@@ -48,6 +48,16 @@ public class wolframalpha {
                             }
                             System.out.println( "" );
                         }
+                        else if (podtitle.contains( "Decimal approximation" ) == true) {
+                            for (WASubpod subpod : pod.getSubpods()) {
+                                for (Object element : subpod.getContents()) {
+                                    if (element instanceof WAPlainText) {
+                                        answer = ((WAPlainText) element).getText();
+                                    }
+                                }
+                            }
+                            System.out.println( "" );
+                        }
                         else if (podtitle.contains( "Solution" ) == true || podtitle.contains( "Result" ) == true || podtitle.contains( "solution" ) == true) {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {

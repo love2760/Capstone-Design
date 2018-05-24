@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="ce.inu.ikta.SaveActivity">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:text="저장 목록"
+        android:background="@drawable/outline"/>
     <ListView
         android:id="@+id/savelist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:dividerHeight="2dp"
+        android:divider="#DDDDDD"/>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

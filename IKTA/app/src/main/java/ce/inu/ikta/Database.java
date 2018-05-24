@@ -14,7 +14,7 @@ import android.util.Log;
 
 public class DataBase extends SQLiteOpenHelper {
     private static final String dbname = "IKTA.SAVEDATA";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 4;
     SQLiteDatabase mdatabase;
 
     public DataBase(Context context) {

@@ -8,4 +8,5 @@ import android.graphics.Bitmap;
 
 public class globalValue {
     public static Bitmap bitimg;
+    public static Bitmap postImg;
 }

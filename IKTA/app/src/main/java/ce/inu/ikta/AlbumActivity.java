@@ -36,9 +36,7 @@ public class AlbumActivity extends AppCompatActivity {
         setContentView( R.layout.activity_album );
 
         context = AlbumActivity.this;
-        cut_ok = (ImageButton) findViewById( R.id.cut_button );
         albumView = (ImageView) findViewById( R.id.album );
-        cutImg = new CutImg( context, activity, cut_ok );
 
         Intent intent = getIntent();
         Uri uri = intent.getParcelableExtra( "uri" );
@@ -52,16 +50,6 @@ public class AlbumActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        cut_ok.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.cut_button) {
-                    cut_ok.setEnabled( false );
-                    cutImg.cutImage();
-                } else {
-                }
-            }
-        } );
     }
 
     @Override
@@ -72,12 +60,25 @@ public class AlbumActivity extends AppCompatActivity {
         size[1] = albumView.getY();
         size[2] = albumView.getWidth();
         size[3] = albumView.getHeight();
-        Log.d( TAG, "뇨로롱 " + size[2] + "  " + size[3] );
-        albumDrawView = AlbumDrawView.create( context, size );
+        linearLayout.removeAllViews();
         albumDrawView.albumDrawView = null;
+        albumDrawView = AlbumDrawView.create( context, size );
         linearLayout.addView( albumDrawView, new RelativeLayout.LayoutParams
                 ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT )
         );
+
+        cut_ok = (ImageButton) findViewById( R.id.cut_button );
+        cut_ok.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.cut_button) {
+                    cutImg = new CutImg( context, activity, cut_ok,size );
+                    cut_ok.setEnabled( false );
+                    cutImg.cutImage(albumDrawView.topY,albumDrawView.bottomY,albumDrawView.leftX,albumDrawView.rightX);
+                } else {
+                }
+            }
+        } );
     }
 
 }

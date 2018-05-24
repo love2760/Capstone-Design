@@ -12,6 +12,7 @@ import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.TextAnnotation;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,9 +66,15 @@ public class CloudVisionAPI {
             final TextAnnotation text = batchResponse.getResponses()
                     .get(0).getFullTextAnnotation();
             if(text == null) {
-                return "식을 인식하는데 실패했습니다.";
+                return null;
             } else {
-                return text.getText();
+                String tmp = text.getText();
+                Log.d(getClass().getName(),tmp);
+                tmp = tmp.replace( "/\\","^" );
+                tmp = tmp.replace( "A","^" );
+                tmp = tmp.replace( ",","" );
+                tmp = tmp.replace( " ", "" );
+                return tmp;
             }
         }
     }

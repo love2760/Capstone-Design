@@ -33,29 +33,33 @@ public class SaveResultActivity extends AppCompatActivity {
         grplist = new ArrayList<>(  );
         child = new HashMap<>(  );
         listView = (ExpandableListView)findViewById( R.id.saveExpandableListView);
-        setListData();
     }
 
     //리스트뷰 구성
     private void setListData() {
 
-        grplist.add("식");
-        grplist.add("답");
-        grplist.add("그래프");
+        grplist.add( "식" );
+        ArrayList<String> input = new ArrayList<String>();
+        input.add( dbDataSet.input );
+        child.put( grplist.get( grplist.indexOf( "식" ) ), input );
 
-        ArrayList<String> input = new ArrayList<String>(  );
-        input.add(dbDataSet.input);
-        ArrayList<String> answer = new ArrayList<String>(  );
-        answer.add(dbDataSet.answer);
-        ArrayList<String> graph = new ArrayList<String>(  );
-        graph.add(dbDataSet.plot);
+        ArrayList<String> answer = new ArrayList<String>();
+        if (dbDataSet.answer.equals( "empty" ) == false) {
+            grplist.add( "답" );
+            answer.add( dbDataSet.answer );
+            child.put( grplist.get( grplist.indexOf( "답" ) ), answer );
+        }
 
-        child.put(grplist.get(0), input);
-        child.put(grplist.get(1), answer);
-        child.put(grplist.get(2), graph);
+        ArrayList<String> graph = new ArrayList<String>();
+        if (dbDataSet.plot.indexOf( "y" ) != -1) {
+            grplist.add( "그래프" );
+            graph.add( dbDataSet.plot );
+            child.put( grplist.get( grplist.indexOf( "그래프" ) ), graph );
+        }
     }
 
     private void setAdaptering() {
+        setListData();
         listView.setAdapter( new resultAdapter( getApplicationContext(), grplist, child ) );    //adapter 적용
 
         //시작시 확장된 상태
@@ -63,16 +67,6 @@ public class SaveResultActivity extends AppCompatActivity {
         for(int i = 0 ; i < groupCount ; i++) {
             listView.expandGroup( i );
         }
-
-        /*
-        //1,2번째 확장 상태로 고정
-        listView.setOnGroupCollapseListener( new ExpandableListView.OnGroupCollapseListener() {
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                listView.expandGroup(0);
-                listView.expandGroup(1);
-            }
-        } );*/
 
         //기본 화살표 아이콘 삭제
         listView.setGroupIndicator( null );
